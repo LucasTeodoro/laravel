@@ -1,0 +1,56 @@
+version: '3'
+
+services: 
+  app:
+    build: .
+    container_name: app
+    volumes: 
+      - .:/var/www
+    networks: 
+      - app-network
+    depends_on:
+      - db
+      - redis
+    command: ["./.docker/teste_db.sh", "db:3306", "--", "php", "php-fpm"]
+  nginx:
+    build: .docker/nginx
+    container_name: nginx
+    restart: always
+    tty: true
+    ports: 
+      - "8000:80"
+    volumes: 
+      - .:/var/www
+    networks: 
+      - app-network
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: db
+    restart: always
+    tty: true
+    ports: 
+      - "3306:3306"
+    volumes: 
+      - ./.docker/dbdata:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=laravel
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+    networks: 
+      - app-network
+  redis:
+    image: redis:alpine
+    container_name: redis
+    expose: 
+      - 6379
+    volumes: 
+      - ./.docker/rddata:/var/lib/redis
+    networks: 
+      - app-network
+
+networks: 
+  app-network:
+    driver: bridge
+
+  
