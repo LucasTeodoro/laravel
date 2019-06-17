@@ -18,8 +18,13 @@ FROM php:fpm-alpine
 RUN apk add bash mysql-client
 RUN docker-php-ext-install pdo pdo_mysql
 WORKDIR /var/www
+COPY . /var/www
+COPY --from=composer /app/vendor /var/www/vendor
+COPY --from=node /app/node_modules /var/www/node_modules
 
 RUN rm -rf /var/www/html
+RUN php artisan key:generate && \
+    php artisan config:cache
 RUN ln -s public html
 
 EXPOSE 9000
