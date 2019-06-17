@@ -1,3 +1,17 @@
+FROM composer as composer
+COPY . /app
+RUN composer install \
+    --ignore-platform-reqs \
+    --no-interaction \
+    --no-plugins \
+    --no-scripts \
+    --prefer-dist
+
+FROM node:10-alpine as node
+COPY . /app
+WORKDIR /app
+RUN npm install
+
 FROM php:fpm-alpine
 #RUN pecl install swoole \ 
 #    && docker-php-ext-enable swoole

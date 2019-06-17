@@ -8,6 +8,8 @@ services:
     tty: true
     volumes: 
       - .:/var/www
+      - ./vendor:/var/www/vendor
+      - ./node_modules:/var/www/node_modules
     networks: 
       - app-network
     depends_on:
