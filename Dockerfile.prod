@@ -16,12 +16,15 @@ FROM php:7.3.6-fpm-alpine3.9
 #RUN pecl install swoole \ 
 #    && docker-php-ext-enable swoole
 RUN apk add --no-cache mysql-client
-RUN pecl install swoole
-RUN docker-php-ext-install pdo pdo_mysql swoole
+RUN docker-php-ext-install pdo pdo_mysql
 
 WORKDIR /var/www
 COPY --from=composer /app .
 COPY --from=node /app .
+
+RUN php artisan key:generate \
+    && php artisan cache:clear \
+    && chmod -R 775 storage
 
 RUN rm -rf /var/www/html
 RUN ln -s public html
