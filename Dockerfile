@@ -15,8 +15,9 @@
 FROM php:7.3.6-fpm-alpine3.9
 #RUN pecl install swoole \ 
 #    && docker-php-ext-enable swoole
-RUN apk add --no-cache openssl bash mysql-client nodejs npm dos2unix
-RUN docker-php-ext-install pdo pdo_mysql
+ARG APP_PORT=9000
+RUN apk add --no-cache openssl bash mysql-client nodejs npm
+RUN docker-php-ext-install pdo_mysql
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV DOCKERIZE_VERSION v0.6.1
@@ -28,5 +29,5 @@ WORKDIR /var/www
 RUN rm -rf /var/www/html
 RUN ln -s public html
 
-EXPOSE 9000
+EXPOSE ${APP_PORT}
 ENTRYPOINT [ "php-fpm" ]
