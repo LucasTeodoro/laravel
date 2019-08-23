@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 
 class GenreController extends Controller
 {
-    private $rules = ["name" => "required|max:255"];
+    private $rules = [
+        "name" => "required|max:255",
+        "is_active" => "boolean"
+    ];
 
     public function index()
     {
