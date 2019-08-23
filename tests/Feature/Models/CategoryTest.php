@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\Category;
+use Ramsey\Uuid\Uuid;
 
 class CategoryTest extends TestCase
 {
@@ -26,6 +27,7 @@ class CategoryTest extends TestCase
     {
         $category = Category::create(["name" => "test"]);
         $category->refresh();
+        $this->assertTrue(Uuid::isValid($category->id));
         $this->assertEquals("test", $category->name);
         $this->assertNull($category->description);
         $this->assertTrue($category->is_active);
