@@ -15,7 +15,7 @@ class CategoryControllerTest extends TestCase
     use DatabaseMigrations, TestValidations, TestSaves;
 
     private $category;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -70,13 +70,13 @@ class CategoryControllerTest extends TestCase
         $response->assertJsonStructure([
             "created_at", "updated_at"
         ]);
-        
+
         $data = [
             "name" => "test",
             "is_active" => false,
             "description" => "description"
         ];
-        $this->assertStore($data, $data + ["description" => "description", "is_active" => false]);
+        $this->assertStore($data, $data + ["is_active" => false, "description" => "description"]);
     }
 
     public function testUpdate()
@@ -124,7 +124,7 @@ class CategoryControllerTest extends TestCase
     public function testDestroy()
     {
         $response = $this->json(
-            "DELETE", 
+            "DELETE",
             route("categories.destroy", ["category" => $this->category->id])
         );
 
@@ -134,7 +134,7 @@ class CategoryControllerTest extends TestCase
         $this->assertNotNull(Category::withTrashed()->find($this->category->id));
     }
 
-    protected function routeStore() 
+    protected function routeStore()
     {
         return route("categories.store");
     }
