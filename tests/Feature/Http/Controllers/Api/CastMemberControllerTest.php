@@ -104,7 +104,7 @@ class CastMemberControllerTest extends TestCase
     {
         $response = $this->json(
             "DELETE",
-            route("castmembers.destroy", ["genre" => $this->castMember->id])
+            route("castmembers.destroy", ["castmember" => $this->castMember->id])
         );
 
         $response

@@ -98,11 +98,10 @@ class BasicCrudControllerTest extends TestCase
         $this->assertEquals($category->toArray(), $result->toArray());
     }
 
-    /**
-     * @expectedException \Illuminate\Validation\ValidationException
-     */
     public function testInvalidationDataUpdate()
     {
+        $this->expectException(ValidationException::class);
+
         /** @var CategoryStub $category */
         $category = CategoryStub::create(["name" => "test", "description" => "test"]);
 
