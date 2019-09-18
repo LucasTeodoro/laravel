@@ -2,54 +2,54 @@
 
 namespace Tests\Unit\Models;
 
-use App\Models\Category;
+use App\Models\CastMember;
 use Tests\TestCase;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\Uuid;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class CategoryTest extends TestCase
+class CastMemberUnitTest extends TestCase
 {
-    private $category;
+    private $castMember;
 
-    protected function setUp(): void 
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->category = new Category();
+        $this->castMember = new CastMember();
     }
 
     public function testFillableAttribute()
     {
-        $fillable = ["name", "description", "is_active"];
-        $this->assertEquals($fillable, $this->category->getFillable());
+        $fillable = ["name", "type"];
+        $this->assertEquals($fillable, $this->castMember->getFillable());
     }
 
     public function testCastsAttribute()
     {
-        $casts = ["id" => "string", "is_active" => "boolean"];
-        $this->assertEquals($casts, $this->category->getCasts());
+        $casts = ["id" => "string", "type" => "integer"];
+        $this->assertEquals($casts, $this->castMember->getCasts());
     }
 
     public function testIncrementsAttribute()
     {
-        $this->assertFalse($this->category->incrementing);
+        $this->assertFalse($this->castMember->incrementing);
     }
 
     public function testDatesAttribute()
     {
         $dates = ["deleted_at", "created_at", "updated_at"];
-        $categoryDates = $this->category->getDates();
+        $categoryDates = $this->castMember->getDates();
         $this->assertEqualsCanonicalizing($dates, $categoryDates);
     }
 
-    public function testIfUseTraits() 
+    public function testIfUseTraits()
     {
         $traits = [
             SoftDeletes::class,
             Uuid::class
         ];
-        $categoryTraits = array_values(class_uses(Category::class));
+        $categoryTraits = array_values(class_uses(CastMember::class));
 
         $this->assertEquals($traits, $categoryTraits);
     }

@@ -9,6 +9,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class CastMember extends Model
 {
     use SoftDeletes, Uuid;
+
+    const TYPE_DIRECTOR = 1;
+    const TYPE_ACTOR = 2;
+
+    public static function typeOptions() {
+        return [self::TYPE_DIRECTOR, self::TYPE_ACTOR];
+    }
+
     protected $fillable = ["name", "type"];
     protected $dates = ["deleted_at"];
     protected $casts = ["id" => "string", "type" => "integer"];
