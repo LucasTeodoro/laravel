@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 /vendor
+.idea
 .env
 .env.testing
 _ide_helper.php
