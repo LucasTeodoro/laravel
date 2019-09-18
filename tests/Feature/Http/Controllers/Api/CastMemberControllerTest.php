@@ -14,7 +14,7 @@ class CastMemberControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
-    protected $castMember;
+    private $castMember;
 
     protected function setUp(): void
     {
