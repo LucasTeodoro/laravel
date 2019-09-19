@@ -2,20 +2,20 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\BasicCrudController;
 use App\Http\Controllers\Api\VideoController;
 use App\Models\Category;
 use App\Models\Genre;
 use App\Models\Video;
-use Illuminate\Support\Facades\Request;
-use Tests\Exceptions\TestException;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\Traits\MockController;
 use Tests\Traits\TestValidations;
 use Tests\Traits\TestSaves;
 
 class VideoControllerTest extends TestCase
 {
-    use DatabaseMigrations, TestValidations, TestSaves;
+    use DatabaseMigrations, TestValidations, TestSaves, MockController;
 
     private $video;
     private $sendData;
@@ -53,7 +53,7 @@ class VideoControllerTest extends TestCase
             ->assertJson($this->video->toArray());
     }
 
-    public function testInvalidationRequired()
+    public function testInvalidationRequiredFields()
     {
         $data = [
             "title" => "",
@@ -68,7 +68,7 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, "required");
     }
 
-    public function testInvalidationMax()
+    public function testInvalidationMaxFields()
     {
         $data = [
             "title" => str_repeat('a', 256),
@@ -77,7 +77,7 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, "max.string", ["max" => 255]);
     }
 
-    public function testInvalidationInteger()
+    public function testInvalidationIntegerFields()
     {
         $data = [
             "duration" => "a"
@@ -147,24 +147,7 @@ class VideoControllerTest extends TestCase
             ],
         ];
 
-        foreach ($data as $value) {
-            $response = $this->assertStore(
-                $value['send_data'],
-                $value['test_data'] + ['deleted_at' => null]
-            );
-            $response->assertJsonStructure([
-                "created_at", "updated_at"
-            ]);
-            $response = $this->assertUpdate(
-                $value['send_data'],
-                $value['test_data'] + ['deleted_at' => null]
-            );
-            $response->assertJsonStructure([
-                "created_at", "updated_at"
-            ]);
-
-        }
-
+        $this->assertSave($data);
     }
 
     public function testDestroy()
@@ -182,47 +165,12 @@ class VideoControllerTest extends TestCase
 
     public function testRollbackStore()
     {
-        $controller = $this->mockController("rulesStore");
-
-        $request = \Mockery::mock(Request::class);
-        try {
-            $controller->store($request);
-        } catch (TestException $exception){
-            $this->assertCount(1, Video::all());
-        }
+        $this->assertRollbackStore();
     }
 
     public function testRollbackUpdate()
     {
-        $controller = $this->mockController("rulesUpdate");
-
-        $request = \Mockery::mock(Request::class);
-        try {
-            $controller->update($request, $this->video->id);
-        } catch (TestException $exception){
-            $this->assertEquals($this->video->toArray(), Video::findOne()->toArray());
-        }
-    }
-
-    protected function mockController($rulesToMock)
-    {
-        $controller = \Mockery::mock(VideoController::class)
-            ->makePartial()
-            ->shouldAllowMockingProtectedMethods();
-
-        $controller->shouldReceive("validate")
-            ->withAnyArgs()
-            ->andReturn($this->sendData);
-
-        $controller->shouldReceive($rulesToMock)
-            ->withAnyArgs()
-            ->andReturn([]);
-
-        $controller->shouldReceive("handleRelations")
-            ->once()
-            ->andThrow(new TestException());
-
-        return $controller;
+        $this->assertRollbackUpdate($this->video);
     }
 
     protected function invalidationArrayField($field)
@@ -256,5 +204,10 @@ class VideoControllerTest extends TestCase
     protected function model()
     {
         return Video::class;
+    }
+
+    protected function controller()
+    {
+        return VideoController::class;
     }
 }

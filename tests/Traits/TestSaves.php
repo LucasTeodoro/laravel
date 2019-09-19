@@ -12,6 +12,26 @@ trait TestSaves
     protected abstract function routeStore();
     protected abstract function routeUpdate();
 
+    protected function assertSave(array $data)
+    {
+        foreach ($data as $value) {
+            $response = $this->assertStore(
+                $value['send_data'],
+                $value['test_data'] + ['deleted_at' => null]
+            );
+            $response->assertJsonStructure([
+                "created_at", "updated_at"
+            ]);
+            $response = $this->assertUpdate(
+                $value['send_data'],
+                $value['test_data'] + ['deleted_at' => null]
+            );
+            $response->assertJsonStructure([
+                "created_at", "updated_at"
+            ]);
+        }
+    }
+
     protected function assertStore(array $sentData, array $testDatabase, array $testJsonData = null): TestResponse
     {
         $response = $this->json("POST", $this->routeStore(), $sentData);

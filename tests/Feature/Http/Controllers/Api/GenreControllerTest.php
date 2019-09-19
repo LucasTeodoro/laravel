@@ -2,24 +2,31 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\GenreController;
+use App\Models\Category;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\Genre;
+use Tests\Traits\MockController;
 use Tests\Traits\TestValidations;
 use Tests\Traits\TestSaves;
 
 class GenreControllerTest extends TestCase
 {
-    use DatabaseMigrations, TestValidations, TestSaves;
+    use DatabaseMigrations, TestValidations, TestSaves, MockController;
 
     private $genre;
+    private $sendData;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->genre = factory(Genre::class)->create();
+        $this->genre = factory(Genre::class)->create([
+            "is_active" => true
+        ]);
+        $this->sendData = [
+            "name" => 'test'
+        ];
     }
 
     public function testIndex()
@@ -40,20 +47,27 @@ class GenreControllerTest extends TestCase
             ->assertJson($this->genre->toArray());
     }
 
-    public function testInvalidationData()
+    public function testInvalidationRequiredFields()
     {
         $data = [
-            "name" => ""
+            "name" => "",
+            "categories_id" => ''
         ];
         $this->assertInvalidationInStoreAction($data, "required");
         $this->assertInvalidationInUpdateAction($data, "required");
+    }
 
+    public function testInvalidationMaxFields()
+    {
         $data = [
             "name" => str_repeat("a", 256)
         ];
         $this->assertInvalidationInStoreAction($data, "max.string", ["max" => 255]);
         $this->assertInvalidationInUpdateAction($data, "max.string", ["max" => 255]);
+    }
 
+    public function testInvalidationBooleanFields()
+    {
         $data = [
             "is_active" => "a"
         ];
@@ -61,32 +75,32 @@ class GenreControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, "boolean");
     }
 
-    public function testStore()
+    public function testSave()
     {
+        $categories = factory(Category::class)->create();
+        $foreign = ["categories_id" => [$categories->id]];
+        $sendActiveFalse = $this->sendData + ["is_active" => false];
         $data = [
-            "name" => "test"
+            [
+                'send_data' => $this->sendData + $foreign,
+                'test_data' => $this->sendData + ["is_active" => true]
+            ],
+            [
+                'send_data' => $sendActiveFalse + $foreign,
+                'test_data' => $sendActiveFalse
+            ]
         ];
-        $response = $this->assertStore($data, $data +["is_active" => true, "deleted_at" => null]);
-        $response->assertJsonStructure([
-            "created_at", "updated_at"
-        ]);
-
-        $data = [
-            "name" => "test",
-            "is_active" => false
-        ];
-
-        $this->assertStore($data, $data + ["is_active" => false]);
+        $this->assertSave($data);
     }
 
-    public function testUpdate()
+    public function testRollbackStore()
     {
-        $data = [
-            "name" => "test",
-            "is_active" => true
-        ];
+        $this->assertRollbackStore();
+    }
 
-        $this->assertUpdate($data, $data + ["deleted_at" => null]);
+    public function testRollbackUpdate()
+    {
+        $this->assertRollbackUpdate($this->genre);
     }
 
     public function testDestroy()
@@ -115,5 +129,10 @@ class GenreControllerTest extends TestCase
     protected function model()
     {
         return Genre::class;
+    }
+
+    protected function controller()
+    {
+        return GenreController::class;
     }
 }
