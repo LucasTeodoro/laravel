@@ -109,11 +109,11 @@ class VideoControllerTest extends TestCase
         $this->invalidationExistsField($field);
     }
 
-    public function testRelationsFields()
+    public function testInvalidationRelationsFields()
     {
         $data = [
-            "genres_id" => "",
-            "categories_id" => ""
+            "genres_id" => "a",
+            "categories_id" => "b"
         ];
         $this->assertInvalidationInStoreAction($data, "relations");
         $this->assertInvalidationInUpdateAction($data, "relations");
