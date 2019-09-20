@@ -14,17 +14,19 @@ class CastMemberControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
-    protected $castMember;
+    private $castMember;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->castMember = factory(CastMember::class)->create();
+        $this->castMember = factory(CastMember::class)->create([
+            'type' => CastMember::TYPE_DIRECTOR
+        ]);
     }
 
     public function testIndex()
     {
-        $response = $this->get(route('castmembers.index'));
+        $response = $this->get(route('cast_members.index'));
 
         $response
             ->assertStatus(200)
@@ -33,7 +35,7 @@ class CastMemberControllerTest extends TestCase
 
     public function testShow()
     {
-        $response = $this->get(route('castmembers.show', ["castmember" => $this->castMember->id]));
+        $response = $this->get(route('cast_members.show', ["cast_member" => $this->castMember->id]));
 
         $response
             ->assertStatus(200)
@@ -43,7 +45,8 @@ class CastMemberControllerTest extends TestCase
     public function testInvalidationData()
     {
         $data = [
-            "name" => ""
+            "name" => "",
+            "type" => ''
         ];
         $this->assertInvalidationInStoreAction($data, "required");
         $this->assertInvalidationInUpdateAction($data, "required");
@@ -55,56 +58,50 @@ class CastMemberControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, "max.string", ["max" => 255]);
 
         $data = [
-            "type" => "a"
+            "type" => 3
         ];
-        $this->assertInvalidationInStoreAction($data, "digits", ["digits" => 1]);
-        $this->assertInvalidationInUpdateAction($data, "digits", ["digits" => 1]);
-
-        $data = [
-            "type" => 11
-        ];
-        $this->assertInvalidationInStoreAction($data, "digits", ["digits" => 1]);
-        $this->assertInvalidationInUpdateAction($data, "digits", ["digits" => 1]);
+        $this->assertInvalidationInStoreAction($data, "in");
+        $this->assertInvalidationInUpdateAction($data, "in");
     }
 
     public function testStore()
     {
         $data = [
-            "name" => "test",
-            "type" => 1
+            [
+                "name" => "test",
+                "type" => CastMember::TYPE_DIRECTOR
+            ],
+            [
+                "name" => "test",
+                "type" => CastMember::TYPE_ACTOR
+            ]
         ];
-        $response = $this->assertStore($data, $data +["type" => 1, "deleted_at" => null]);
-        $response->assertJsonStructure([
-            "created_at", "updated_at"
-        ]);
-
-        $data = [
-            "name" => "test",
-            "type" => 2
-        ];
-
-        $this->assertStore($data, $data + ["type" => 2]);
+        foreach($data as $key => $value) {
+            $response = $this->assertStore($value, $value +["deleted_at" => null]);
+            $response->assertJsonStructure([
+                "created_at", "updated_at"
+            ]);
+        }
     }
 
     public function testUpdate()
     {
-        $this->castMember = factory(CastMember::class)->create([
-            'type' => 2
-        ]);
-
         $data = [
             "name" => "test",
-            "type" => 1
+            "type" => CastMember::TYPE_ACTOR
         ];
 
-        $this->assertUpdate($data, $data + ["deleted_at" => null]);
+        $response = $this->assertUpdate($data, $data + ["deleted_at" => null]);
+        $response->assertJsonStructure([
+            "created_at", "updated_at"
+        ]);
     }
 
     public function testDestroy()
     {
         $response = $this->json(
             "DELETE",
-            route("castmembers.destroy", ["genre" => $this->castMember->id])
+            route("cast_members.destroy", ["cast_member" => $this->castMember->id])
         );
 
         $response
@@ -115,12 +112,12 @@ class CastMemberControllerTest extends TestCase
 
     protected function routeStore()
     {
-        return route("castmembers.store");
+        return route("cast_members.store");
     }
 
     protected function routeUpdate()
     {
-        return route("castmembers.update", ["castmember" => $this->castMember->id]);
+        return route("cast_members.update", ["cast_member" => $this->castMember->id]);
     }
 
     protected function model()
