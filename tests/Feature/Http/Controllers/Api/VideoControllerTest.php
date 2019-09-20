@@ -131,6 +131,7 @@ class VideoControllerTest extends TestCase
     {
         $category = factory(Category::class)->create();
         $genre = factory(Genre::class)->create();
+        $genre->categories()->sync([$category->id]);
         $foreign = ["categories_id" => [$category->id], "genres_id" => [$genre->id]];
         $data = [
             [

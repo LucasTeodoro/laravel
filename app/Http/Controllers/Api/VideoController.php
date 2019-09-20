@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Traits\Transaction;
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 class VideoController extends BasicCrudController
 {
+    use Transaction;
     private $rules;
 
     public function __construct()
     {
+        Validator::extend("relations", 'App\Http\Controllers\Api\Validator\RelationValidator@relations');
         $this->rules = [
             'title' => 'required|max:255',
             'description' => 'required',
@@ -19,41 +23,9 @@ class VideoController extends BasicCrudController
             'opened' => 'boolean',
             'rating' => 'required|in:'. implode(",", Video::RATING_LIST),
             'duration' => 'required|integer',
-            'categories_id' => 'required|array|exists:categories,id',
-            'genres_id' => 'required|array|exists:genres,id'
+            'categories_id' => 'required|array|exists:categories,id|relations:genres_id',
+            'genres_id' => 'required|array|exists:genres,id|relations:categories_id'
         ];
-    }
-
-    public function store(Request $request)
-    {
-        $validatedData = $this->validate($request, $this->rulesStore());
-        $self = $this;
-        $obj = \DB::transaction(function () use ($request, $validatedData, $self) {
-            /** @var Video $obj */
-            $obj = $this->model()::create($validatedData);
-            $self->handleRelations($obj, $request);
-
-            return $obj;
-        });
-
-        $obj->refresh();
-        return $obj;
-    }
-
-    public function update(Request $request, $id)
-    {
-        $validatedData = $this->validate($request, $this->rulesUpdate());
-        $self = $this;
-        /** @var Video $dataToBeUpdated */
-        $dataToBeUpdated = $this->findOrFail($id);
-        $dataToBeUpdated = \DB::transaction(function () use ($request, $validatedData, $dataToBeUpdated, $self) {
-            $dataToBeUpdated->update($validatedData);
-            $self->handleRelations($dataToBeUpdated, $request);
-
-            return $dataToBeUpdated;
-        });
-
-        return $dataToBeUpdated;
     }
 
     protected function handleRelations(Video $video, Request $request)
