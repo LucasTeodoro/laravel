@@ -11,21 +11,25 @@ class RelationValidator
     private $relation;
 
     public function relations($attribute, $value, $parameters, $validator){
-        $data = $validator->getData();
-        $this->attribute = $attribute;
-        if(count($parameters) > 1 or count($parameters) === 0) return false;
-        $this->relation = $parameters[0];
-        if(count($data[$attribute]) != count($data[$parameters[0]])) return false;
-        $table = $this->tableName();
-        foreach($data[$attribute] as $key => $value) {
-            $select = \DB::table($table)
-                ->where($this->replace($this->attribute), "=", $value)
-                ->where($this->replace($this->relation), "=", $data[$this->relation][$key])
-                ->first();
-            if(!$select) return false;
-        }
+        try {
+            $data = $validator->getData();
+            $this->attribute = $attribute;
+            if (count($parameters) > 1 or count($parameters) === 0) return false;
+            $this->relation = $parameters[0];
+            if (count($data[$attribute]) != count($data[$parameters[0]])) return false;
+            $table = $this->tableName();
+            foreach ($data[$attribute] as $key => $value) {
+                $select = \DB::table($table)
+                    ->where($this->replace($this->attribute), "=", $value)
+                    ->where($this->replace($this->relation), "=", $data[$this->relation][$key])
+                    ->first();
+                if (!$select) return false;
+            }
 
-        return true;
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 
     private function tableName()
