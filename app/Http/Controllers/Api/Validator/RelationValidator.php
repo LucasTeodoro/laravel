@@ -9,23 +9,27 @@ use function foo\func;
 class RelationValidator
 {
     public function relations($attribute, $value, $parameters, $validator){
-        $some = [];
-        $data = $validator->getData();
-        if (!is_array($value)) throw new \Exception("Value is not array");
-        if (count($parameters) > 1 or count($parameters) === 0) throw new \Exception("Parameters is invalid");
-        $relation = collect($data[$parameters[0]]);
-        $table = $this->tableName($attribute, $parameters);
-        foreach ($value as $interaction) {
-            $select = \DB::table($table)
-                ->where($this->replace($attribute), "=", $interaction)
-                ->get();
-            if(count($select->toArray()) === 0) return false;
-            array_push($some,$select->some(function ($value) use ($relation, $parameters) {
-                return $relation->contains($value->{$this->replace($parameters[0])});
-            }));
-        }
+        try {
+            $some = [];
+            $data = $validator->getData();
+            if (!is_array($value)) throw new \Exception("Value is not array");
+            if (count($parameters) > 1 or count($parameters) === 0) throw new \Exception("Parameters is invalid");
+            $relation = collect($data[$parameters[0]]);
+            $table = $this->tableName($attribute, $parameters);
+            foreach ($value as $interaction) {
+                $select = \DB::table($table)
+                    ->where($this->replace($attribute), "=", $interaction)
+                    ->get();
+                if (count($select->toArray()) === 0) return false;
+                array_push($some, $select->some(function ($value) use ($relation, $parameters) {
+                    return $relation->contains($value->{$this->replace($parameters[0])});
+                }));
+            }
 
-        return !in_array(false,$some);
+            return !in_array(false, $some);
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 
     private function tableName($attribute, $parameters)
