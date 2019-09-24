@@ -4,41 +4,37 @@
 namespace App\Http\Controllers\Api\Validator;
 
 use Illuminate\Support\Arr;
+use function foo\func;
 
 class RelationValidator
 {
-    private $attribute;
-    private $relation;
-
     public function relations($attribute, $value, $parameters, $validator){
-        try {
-            $data = $validator->getData();
-            $this->attribute = $attribute;
-            if (count($parameters) > 1 or count($parameters) === 0) return "Parameters is invalid";
-            $this->relation = $parameters[0];
-            $table = $this->tableName();
-            foreach ($data[$attribute] as $value) {
-                foreach ($data[$parameters[0]] as $relation) {
-                    $select = \DB::table($table)
-                        ->where($this->replace($this->attribute), "=", $value)
-                        ->where($this->replace($this->relation), "=", $relation)
-                        ->first();
-                    if (!$select) return false;
-                }
-            }
-            return true;
-        } catch (\Exception $exception) {
-            return $exception->getMessage();
+        $some = [];
+        $data = $validator->getData();
+        if (!is_array($value)) throw new \Exception("Value is not array");
+        if (count($parameters) > 1 or count($parameters) === 0) throw new \Exception("Parameters is invalid");
+        $relation = collect($data[$parameters[0]]);
+        $table = $this->tableName($attribute, $parameters);
+        foreach ($value as $interaction) {
+            $select = \DB::table($table)
+                ->where($this->replace($attribute), "=", $interaction)
+                ->get();
+            if(count($select->toArray()) === 0) return false;
+            array_push($some,$select->some(function ($value) use ($relation, $parameters) {
+                return $relation->contains($value->{$this->replace($parameters[0])});
+            }));
         }
+
+        return !in_array(false,$some);
     }
 
-    private function tableName()
+    private function tableName($attribute, $parameters)
     {
         return $this->replace(implode(
             "_",
             Arr::sort([
-                substr($this->attribute,0,-3),
-                substr($this->relation, 0, -3)
+                substr($attribute,0,-3),
+                substr($parameters[0], 0, -3)
             ])
         ));
     }
