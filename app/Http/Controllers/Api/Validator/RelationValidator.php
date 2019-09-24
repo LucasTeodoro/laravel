@@ -23,7 +23,7 @@ class RelationValidator
                         ->where($this->replace($this->attribute), "=", $value)
                         ->where($this->replace($this->relation), "=", $relation)
                         ->first();
-                    if ($select === false) return false;
+                    if (!$select) return false;
                 }
             }
             return true;
