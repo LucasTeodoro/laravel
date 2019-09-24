@@ -113,11 +113,11 @@ class VideoControllerTest extends TestCase
     {
         $data = [
             [
-                "genres_id" => "a",
-                "categories_id" => "b"
+                "genres_id" => ["a"],
+                "categories_id" => ["b"]
             ],
             [
-                "genres_id" => "a",
+                "genres_id" => ["a"],
                 "categories_id" => ["b", "c"]
             ],
             [
