@@ -75,6 +75,13 @@ class GenreControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, "boolean");
     }
 
+    public function testInvalidationCategoriesIdField()
+    {
+        $field = "categories_id";
+        $this->assertArrayField($field);
+        $this->assertExistsField($field);
+    }
+
     public function testSave()
     {
         $categories = factory(Category::class)->create();
@@ -91,6 +98,7 @@ class GenreControllerTest extends TestCase
             ]
         ];
         $this->assertSave($data);
+        $this->assertCount(1, $this->genre->categories()->get()->toArray());
     }
 
     public function testRollbackStore()
