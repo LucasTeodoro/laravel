@@ -48,4 +48,22 @@ trait TestValidations {
         }
     }
 
+    protected function assertArrayField($field)
+    {
+        $data = [
+            $field => "a"
+        ];
+        $this->assertInvalidationInStoreAction($data, "array");
+        $this->assertInvalidationInUpdateAction($data, "array");
+    }
+
+    protected function assertExistsField($field)
+    {
+        $data = [
+            $field => [100]
+        ];
+        $this->assertInvalidationInStoreAction($data, "exists");
+        $this->assertInvalidationInUpdateAction($data, "exists");
+    }
+
 }

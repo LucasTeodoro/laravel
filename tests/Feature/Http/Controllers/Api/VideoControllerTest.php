@@ -98,25 +98,38 @@ class VideoControllerTest extends TestCase
     public function testInvalidationCategoriesIdField()
     {
         $field = "categories_id";
-        $this->invalidationArrayField($field);
-        $this->invalidationExistsField($field);
+        $this->assertArrayField($field);
+        $this->assertExistsField($field);
     }
 
     public function testInvalidationGenresIdField()
     {
         $field = "genres_id";
-        $this->invalidationArrayField($field);
-        $this->invalidationExistsField($field);
+        $this->assertArrayField($field);
+        $this->assertExistsField($field);
     }
 
     public function testInvalidationRelationsFields()
     {
         $data = [
-            "genres_id" => "a",
-            "categories_id" => "b"
+            [
+                "genres_id" => "a",
+                "categories_id" => "b"
+            ],
+            [
+                "genres_id" => "a",
+                "categories_id" => ["b", "c"]
+            ],
+            [
+                "genres_id" => ["a", "b"],
+                "categories_id" => ["b", "c"]
+            ],
+
         ];
-        $this->assertInvalidationInStoreAction($data, "relations");
-        $this->assertInvalidationInUpdateAction($data, "relations");
+        foreach ($data as $value) {
+            $this->assertInvalidationInStoreAction($value, "relations");
+            $this->assertInvalidationInUpdateAction($value, "relations");
+        }
     }
 
     public function testInvalidationOpenedField()
@@ -159,6 +172,8 @@ class VideoControllerTest extends TestCase
         ];
 
         $this->assertSave($data);
+        $this->assertCount(1, $this->video->categories()->get()->toArray());
+        $this->assertCount(1, $this->video->genres()->get()->toArray());
     }
 
     public function testDestroy()
@@ -182,24 +197,6 @@ class VideoControllerTest extends TestCase
     public function testRollbackUpdate()
     {
         $this->assertRollbackUpdate($this->video);
-    }
-
-    protected function invalidationArrayField($field)
-    {
-        $data = [
-            $field => "a"
-        ];
-        $this->assertInvalidationInStoreAction($data, "array");
-        $this->assertInvalidationInUpdateAction($data, "array");
-    }
-
-    protected function invalidationExistsField($field)
-    {
-        $data = [
-            $field => [100]
-        ];
-        $this->assertInvalidationInStoreAction($data, "exists");
-        $this->assertInvalidationInUpdateAction($data, "exists");
     }
 
     protected function routeStore()
