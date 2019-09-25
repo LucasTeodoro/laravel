@@ -4,12 +4,12 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\GenreController;
 use App\Models\Category;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\Genre;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 use Tests\Traits\MockController;
-use Tests\Traits\TestValidations;
 use Tests\Traits\TestSaves;
+use Tests\Traits\TestValidations;
 
 class GenreControllerTest extends TestCase
 {

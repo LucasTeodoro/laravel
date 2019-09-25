@@ -2,16 +2,15 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\BasicCrudController;
 use App\Http\Controllers\Api\VideoController;
 use App\Models\Category;
 use App\Models\Genre;
 use App\Models\Video;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 use Tests\Traits\MockController;
-use Tests\Traits\TestValidations;
 use Tests\Traits\TestSaves;
+use Tests\Traits\TestValidations;
 
 class VideoControllerTest extends TestCase
 {

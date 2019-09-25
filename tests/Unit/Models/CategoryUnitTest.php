@@ -3,11 +3,9 @@
 namespace Tests\Unit\Models;
 
 use App\Models\Category;
-use Tests\TestCase;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\Uuid;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Tests\TestCase;
 
 class CategoryUnitTest extends TestCase
 {

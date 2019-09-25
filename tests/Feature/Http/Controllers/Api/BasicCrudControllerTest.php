@@ -4,9 +4,9 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\BasicCrudController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Tests\Stubs\Controllers\CategoryControllerStub;
-use Illuminate\Http\Request;
 use Tests\Stubs\Models\CategoryStub;
 use Tests\TestCase;
 

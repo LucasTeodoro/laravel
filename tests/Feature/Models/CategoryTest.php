@@ -2,12 +2,10 @@
 
 namespace Tests\Feature\Models;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\Category;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Ramsey\Uuid\Uuid;
+use Tests\TestCase;
 
 class CategoryTest extends TestCase
 {
@@ -15,7 +13,7 @@ class CategoryTest extends TestCase
 
     public function testList()
     {
-        $categoriesFields = ["id","name","description","is_active","created_at","updated_at","deleted_at"];
+        $categoriesFields = ["id", "name", "description", "is_active", "created_at", "updated_at", "deleted_at"];
         factory(Category::class, 1)->create();
         $categories = Category::all();
         $categoriesKey = array_keys($categories->first()->getAttributes());
@@ -54,7 +52,7 @@ class CategoryTest extends TestCase
             "is_active" => true
         ];
         $category->update($data);
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $this->assertEquals($value, $category->{$key});
         }
     }

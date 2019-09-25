@@ -4,11 +4,11 @@
 namespace App\Http\Controllers\Api\Validator;
 
 use Illuminate\Support\Arr;
-use function foo\func;
 
 class RelationValidator
 {
-    public function relations($attribute, $value, $parameters, $validator){
+    public function relations($attribute, $value, $parameters, $validator)
+    {
         try {
             $some = [];
             $data = $validator->getData();
@@ -37,7 +37,7 @@ class RelationValidator
         return $this->replace(implode(
             "_",
             Arr::sort([
-                substr($attribute,0,-3),
+                substr($attribute, 0, -3),
                 substr($parameters[0], 0, -3)
             ])
         ));

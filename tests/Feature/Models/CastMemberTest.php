@@ -2,12 +2,10 @@
 
 namespace Tests\Feature\Models;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\CastMember;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Ramsey\Uuid\Uuid;
+use Tests\TestCase;
 
 class CastMemberTest extends TestCase
 {
@@ -15,7 +13,7 @@ class CastMemberTest extends TestCase
 
     public function testList()
     {
-        $castMembersFields = ["id","name","type","created_at","updated_at","deleted_at"];
+        $castMembersFields = ["id", "name", "type", "created_at", "updated_at", "deleted_at"];
         factory(CastMember::class, 1)->create();
         $castMembers = CastMember::all();
         $castMembersKey = array_keys($castMembers->first()->getAttributes());
@@ -40,7 +38,7 @@ class CastMemberTest extends TestCase
             "type" => 2
         ];
         $genre->update($data);
-        foreach($data as $key => $value) {
+        foreach ($data as $key => $value) {
             $this->assertEquals($value, $genre->{$key});
         }
     }

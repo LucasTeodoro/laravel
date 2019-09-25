@@ -16,6 +16,7 @@ class RelationValidatorTest extends TestCase
         "genres_id" => "relations:categories_id",
         "categories_id" => "relations:genres_id",
     ];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -51,7 +52,7 @@ class RelationValidatorTest extends TestCase
         $genres = factory(Genre::class, 2)->create();
         $syncArray = [];
         $genresArray = [];
-        foreach ($categories as $category){
+        foreach ($categories as $category) {
             array_push($syncArray, $category->id);
         }
         foreach ($genres as $genre) {
