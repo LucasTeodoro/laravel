@@ -14,12 +14,6 @@ class CategoryControllerTest extends TestCase
 
     private $category;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->category = factory(Category::class)->create();
-    }
-
     public function testIndex()
     {
         $response = $this->get(route('categories.index'));
@@ -64,9 +58,11 @@ class CategoryControllerTest extends TestCase
         $data = [
             "name" => "test"
         ];
-        $response = $this->assertStore($data, $data + ["description" => null, "is_active" => true, "deleted_at" => null]);
+        $response = $this->assertStore($data,
+            $data + ["description" => null, "is_active" => true, "deleted_at" => null]);
         $response->assertJsonStructure([
-            "created_at", "updated_at"
+            "created_at",
+            "updated_at"
         ]);
 
         $data = [
@@ -89,7 +85,8 @@ class CategoryControllerTest extends TestCase
             $data + ["deleted_at" => null]
         );
         $response->assertJsonStructure([
-            "created_at", "updated_at"
+            "created_at",
+            "updated_at"
         ]);
 
         $data = [
@@ -125,6 +122,12 @@ class CategoryControllerTest extends TestCase
             ->assertStatus(204);
         $this->assertNull(Category::find($this->category->id));
         $this->assertNotNull(Category::withTrashed()->find($this->category->id));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->category = factory(Category::class)->create();
     }
 
     protected function routeStore()

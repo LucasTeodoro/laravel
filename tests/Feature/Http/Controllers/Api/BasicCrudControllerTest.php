@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\BasicCrudController;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Mockery;
+use ReflectionClass;
 use Tests\Stubs\Controllers\CategoryControllerStub;
 use Tests\Stubs\Models\CategoryStub;
 use Tests\TestCase;
@@ -13,20 +15,6 @@ use Tests\TestCase;
 class BasicCrudControllerTest extends TestCase
 {
     protected $controller;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        CategoryStub::dropTable();
-        CategoryStub::createTable();
-        $this->controller = new CategoryControllerStub();
-    }
-
-    protected function tearDown(): void
-    {
-        CategoryStub::dropTable();
-        parent::tearDown();
-    }
 
     public function testIndex()
     {
@@ -40,7 +28,7 @@ class BasicCrudControllerTest extends TestCase
     {
         $this->expectException(ValidationException::class);
 
-        $request = \Mockery::mock(Request::class);
+        $request = Mockery::mock(Request::class);
         $request
             ->shouldReceive("all")
             ->once()
@@ -50,7 +38,7 @@ class BasicCrudControllerTest extends TestCase
 
     public function testStore()
     {
-        $request = \Mockery::mock(Request::class);
+        $request = Mockery::mock(Request::class);
         $request
             ->shouldReceive("all")
             ->once()
@@ -68,7 +56,7 @@ class BasicCrudControllerTest extends TestCase
         /** @var CategoryStub $category */
         $category = CategoryStub::create(["name" => "test", "description" => "test"]);
 
-        $reflectionClass = new \ReflectionClass(BasicCrudController::class);
+        $reflectionClass = new ReflectionClass(BasicCrudController::class);
         $reflectionMethod = $reflectionClass->getMethod("findOrFail");
         $reflectionMethod->setAccessible(true);
 
@@ -81,7 +69,7 @@ class BasicCrudControllerTest extends TestCase
     {
         $this->expectException(ModelNotFoundException::class);
 
-        $reflectionClass = new \ReflectionClass(BasicCrudController::class);
+        $reflectionClass = new ReflectionClass(BasicCrudController::class);
         $reflectionMethod = $reflectionClass->getMethod("findOrFail");
         $reflectionMethod->setAccessible(true);
 
@@ -105,7 +93,7 @@ class BasicCrudControllerTest extends TestCase
         /** @var CategoryStub $category */
         $category = CategoryStub::create(["name" => "test", "description" => "test"]);
 
-        $request = \Mockery::mock(Request::class);
+        $request = Mockery::mock(Request::class);
         $request
             ->shouldReceive("all")
             ->once()
@@ -118,7 +106,7 @@ class BasicCrudControllerTest extends TestCase
         /** @var CategoryStub $category */
         $category = CategoryStub::create(["name" => "test", "description" => "test"]);
 
-        $request = \Mockery::mock(Request::class);
+        $request = Mockery::mock(Request::class);
         $request
             ->shouldReceive("all")
             ->once()
@@ -138,6 +126,20 @@ class BasicCrudControllerTest extends TestCase
         $category = CategoryStub::create(["name" => "test", "description" => "test"]);
         $this->controller->destroy($category->id);
         $this->assertNull(CategoryStub::find($category->id));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        CategoryStub::dropTable();
+        CategoryStub::createTable();
+        $this->controller = new CategoryControllerStub();
+    }
+
+    protected function tearDown(): void
+    {
+        CategoryStub::dropTable();
+        parent::tearDown();
     }
 
 }

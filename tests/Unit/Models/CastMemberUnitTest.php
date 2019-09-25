@@ -11,12 +11,6 @@ class CastMemberUnitTest extends TestCase
 {
     private $castMember;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->castMember = new CastMember();
-    }
-
     public function testFillableAttribute()
     {
         $fillable = ["name", "type"];
@@ -50,5 +44,11 @@ class CastMemberUnitTest extends TestCase
         $categoryTraits = array_values(class_uses(CastMember::class));
 
         $this->assertEquals($traits, $categoryTraits);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->castMember = new CastMember();
     }
 }

@@ -11,7 +11,7 @@ class Video extends Model
     use Uuid, SoftDeletes;
 
     const RATING_LIST = ['L', '10', '12', '14', '16', '18'];
-
+    public $incrementing = false;
     protected $fillable = [
         'title',
         'description',
@@ -20,17 +20,13 @@ class Video extends Model
         'rating',
         'duration'
     ];
-
     protected $dates = ['deleted_at'];
-
     protected $casts = [
         'id' => 'string',
         'opened' => 'boolean',
         'year_launched' => 'integer',
         'duration' => 'integer'
     ];
-
-    public $incrementing = false;
 
     public function categories()
     {

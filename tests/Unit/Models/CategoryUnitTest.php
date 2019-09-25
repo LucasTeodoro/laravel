@@ -11,12 +11,6 @@ class CategoryUnitTest extends TestCase
 {
     private $category;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->category = new Category();
-    }
-
     public function testFillableAttribute()
     {
         $fillable = ["name", "description", "is_active"];
@@ -50,5 +44,11 @@ class CategoryUnitTest extends TestCase
         $categoryTraits = array_values(class_uses(Category::class));
 
         $this->assertEquals($traits, $categoryTraits);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->category = new Category();
     }
 }

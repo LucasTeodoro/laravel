@@ -17,12 +17,6 @@ class RelationValidatorTest extends TestCase
         "categories_id" => "relations:genres_id",
     ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->app["validator"]->extend("relations", 'App\Http\Controllers\Api\Validator\RelationValidator@relations');
-    }
-
     public function testValidateRelations()
     {
 
@@ -73,5 +67,11 @@ class RelationValidatorTest extends TestCase
             $validator = $this->app["validator"]->make($value, $this->rules);
             $this->assertTrue($validator->passes());
         }
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->app["validator"]->extend("relations", 'App\Http\Controllers\Api\Validator\RelationValidator@relations');
     }
 }

@@ -11,12 +11,6 @@ class VideoUnitTest extends TestCase
 {
     private $video;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->video = new Video();
-    }
-
     public function testFillableAttribute()
     {
         $fillable = [
@@ -62,5 +56,11 @@ class VideoUnitTest extends TestCase
         $videoTraits = array_values(class_uses(Video::class));
 
         $this->assertEquals($traits, $videoTraits);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->video = new Video();
     }
 }

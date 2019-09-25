@@ -18,17 +18,6 @@ class GenreControllerTest extends TestCase
     private $genre;
     private $sendData;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->genre = factory(Genre::class)->create([
-            "is_active" => true
-        ]);
-        $this->sendData = [
-            "name" => 'test'
-        ];
-    }
-
     public function testIndex()
     {
         $response = $this->get(route('genres.index'));
@@ -122,6 +111,17 @@ class GenreControllerTest extends TestCase
             ->assertStatus(204);
         $this->assertNull(Genre::find($this->genre->id));
         $this->assertNotNull(Genre::withTrashed()->find($this->genre->id));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->genre = factory(Genre::class)->create([
+            "is_active" => true
+        ]);
+        $this->sendData = [
+            "name" => 'test'
+        ];
     }
 
     protected function routeStore()

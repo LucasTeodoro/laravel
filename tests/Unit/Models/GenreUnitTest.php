@@ -11,12 +11,6 @@ class GenreUnitTest extends TestCase
 {
     private $genre;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->genre = new Genre();
-    }
-
     public function testFillableAttribute()
     {
         $fillable = ["name", "is_active"];
@@ -50,5 +44,11 @@ class GenreUnitTest extends TestCase
         $genreTraits = array_values(class_uses(Genre::class));
 
         $this->assertEquals($traits, $genreTraits);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->genre = new Genre();
     }
 }
