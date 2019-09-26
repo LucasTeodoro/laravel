@@ -108,6 +108,30 @@ class RelationValidatorTest extends TestCase
         $this->assertFalse($this->validateRule($data));
     }
 
+    public function testValidationRelationsOneToOneAndOneToOne()
+    {
+        $categories_ids = $this->makeCategories(1);
+        $genres_ids = $this->makeGenres(1);
+        $this->makeSync($genres_ids, $categories_ids);
+
+        $relatedItensCategories = $this->makeIdsArray($categories_ids);
+        $relatedItensGenres = $this->makeIdsArray($genres_ids);
+
+        $categories_ids = $this->makeCategories(1);
+        $genres_ids = $this->makeGenres(1);
+        $this->makeSync($genres_ids, $categories_ids);
+
+        array_merge($relatedItensCategories, $this->makeIdsArray($categories_ids));
+        array_merge($relatedItensGenres, $this->makeIdsArray($genres_ids));
+
+        $data = [
+            "categories_id" => $relatedItensCategories,
+            "genres_id" => $relatedItensGenres
+        ];
+
+        $this->assertTrue($this->validateRule($data));
+    }
+
     protected function validateRule($value): bool
     {
         $validator = $this->app["validator"]->make($value, $this->rules);
