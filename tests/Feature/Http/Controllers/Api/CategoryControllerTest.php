@@ -2,25 +2,17 @@
 
 namespace Tests\Feature\Http\Controllers\Api;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\Category;
-use Tests\Traits\TestValidations;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 use Tests\Traits\TestSaves;
+use Tests\Traits\TestValidations;
 
 class CategoryControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
     private $category;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->category = factory(Category::class)->create();
-    }
 
     public function testIndex()
     {
@@ -66,9 +58,11 @@ class CategoryControllerTest extends TestCase
         $data = [
             "name" => "test"
         ];
-        $response = $this->assertStore($data, $data + ["description" => null, "is_active" => true, "deleted_at" => null]);
+        $response = $this->assertStore($data,
+            $data + ["description" => null, "is_active" => true, "deleted_at" => null]);
         $response->assertJsonStructure([
-            "created_at", "updated_at"
+            "created_at",
+            "updated_at"
         ]);
 
         $data = [
@@ -91,7 +85,8 @@ class CategoryControllerTest extends TestCase
             $data + ["deleted_at" => null]
         );
         $response->assertJsonStructure([
-            "created_at", "updated_at"
+            "created_at",
+            "updated_at"
         ]);
 
         $data = [
@@ -127,6 +122,12 @@ class CategoryControllerTest extends TestCase
             ->assertStatus(204);
         $this->assertNull(Category::find($this->category->id));
         $this->assertNotNull(Category::withTrashed()->find($this->category->id));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->category = factory(Category::class)->create();
     }
 
     protected function routeStore()

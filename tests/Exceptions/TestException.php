@@ -4,7 +4,9 @@
 namespace Tests\Exceptions;
 
 
-class TestException extends \Exception
+use Exception;
+
+class TestException extends Exception
 {
 
 }

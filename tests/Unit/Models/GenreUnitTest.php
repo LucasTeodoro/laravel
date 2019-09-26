@@ -2,22 +2,14 @@
 
 namespace Tests\Unit\Models;
 
-use Tests\TestCase;
 use App\Models\Genre;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\Uuid;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Tests\TestCase;
 
 class GenreUnitTest extends TestCase
 {
     private $genre;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->genre = new Genre();
-    }
 
     public function testFillableAttribute()
     {
@@ -52,5 +44,11 @@ class GenreUnitTest extends TestCase
         $genreTraits = array_values(class_uses(Genre::class));
 
         $this->assertEquals($traits, $genreTraits);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->genre = new Genre();
     }
 }

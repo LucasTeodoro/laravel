@@ -7,16 +7,12 @@ use Illuminate\Http\Request;
 
 abstract class BasicCrudController extends Controller
 {
-    protected abstract function model();
-
-    protected abstract function rulesStore();
-
-    protected abstract function rulesUpdate();
-
     public function index()
     {
         return $this->model()::all();
     }
+
+    protected abstract function model();
 
     public function store(Request $request)
     {
@@ -27,9 +23,19 @@ abstract class BasicCrudController extends Controller
         return $obj;
     }
 
+    protected abstract function rulesStore();
+
     public function show($id)
     {
         return $this->findOrFail($id);
+    }
+
+    protected function findOrFail($id)
+    {
+        $model = $this->model();
+        $keyName = (new $model)->getRouteKeyName();
+
+        return $this->model()::where($keyName, $id)->firstOrFail();
     }
 
     public function update(Request $request, $id)
@@ -41,19 +47,13 @@ abstract class BasicCrudController extends Controller
         return $dataToBeUpdated;
     }
 
+    protected abstract function rulesUpdate();
+
     public function destroy($id)
     {
         $dataToBeDeleted = $this->findOrFail($id);
         $dataToBeDeleted->delete();
 
         return response()->noContent();
-    }
-
-    protected function findOrFail($id)
-    {
-        $model = $this->model();
-        $keyName = (new $model)->getRouteKeyName();
-
-        return $this->model()::where($keyName, $id)->firstOrFail();
     }
 }

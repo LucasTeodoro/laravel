@@ -3,26 +3,16 @@
 namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Models\CastMember;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Tests\Traits\TestValidations;
+use Tests\TestCase;
 use Tests\Traits\TestSaves;
+use Tests\Traits\TestValidations;
 
 class CastMemberControllerTest extends TestCase
 {
     use DatabaseMigrations, TestValidations, TestSaves;
 
     private $castMember;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->castMember = factory(CastMember::class)->create([
-            'type' => CastMember::TYPE_DIRECTOR
-        ]);
-    }
 
     public function testIndex()
     {
@@ -76,10 +66,11 @@ class CastMemberControllerTest extends TestCase
                 "type" => CastMember::TYPE_ACTOR
             ]
         ];
-        foreach($data as $key => $value) {
-            $response = $this->assertStore($value, $value +["deleted_at" => null]);
+        foreach ($data as $key => $value) {
+            $response = $this->assertStore($value, $value + ["deleted_at" => null]);
             $response->assertJsonStructure([
-                "created_at", "updated_at"
+                "created_at",
+                "updated_at"
             ]);
         }
     }
@@ -93,7 +84,8 @@ class CastMemberControllerTest extends TestCase
 
         $response = $this->assertUpdate($data, $data + ["deleted_at" => null]);
         $response->assertJsonStructure([
-            "created_at", "updated_at"
+            "created_at",
+            "updated_at"
         ]);
     }
 
@@ -108,6 +100,14 @@ class CastMemberControllerTest extends TestCase
             ->assertStatus(204);
         $this->assertNull(CastMember::find($this->castMember->id));
         $this->assertNotNull(CastMember::withTrashed()->find($this->castMember->id));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->castMember = factory(CastMember::class)->create([
+            'type' => CastMember::TYPE_DIRECTOR
+        ]);
     }
 
     protected function routeStore()

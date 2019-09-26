@@ -12,13 +12,13 @@ class CastMember extends Model
 
     const TYPE_DIRECTOR = 1;
     const TYPE_ACTOR = 2;
-
-    public static function typeOptions() {
-        return [self::TYPE_DIRECTOR, self::TYPE_ACTOR];
-    }
-
+    public $incrementing = false;
     protected $fillable = ["name", "type"];
     protected $dates = ["deleted_at"];
     protected $casts = ["id" => "string", "type" => "integer"];
-    public $incrementing = false;
+
+    public static function typeOptions()
+    {
+        return [self::TYPE_DIRECTOR, self::TYPE_ACTOR];
+    }
 }

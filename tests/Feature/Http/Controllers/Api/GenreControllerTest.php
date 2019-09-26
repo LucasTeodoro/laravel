@@ -4,12 +4,12 @@ namespace Tests\Feature\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\GenreController;
 use App\Models\Category;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use App\Models\Genre;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Tests\TestCase;
 use Tests\Traits\MockController;
-use Tests\Traits\TestValidations;
 use Tests\Traits\TestSaves;
+use Tests\Traits\TestValidations;
 
 class GenreControllerTest extends TestCase
 {
@@ -17,17 +17,6 @@ class GenreControllerTest extends TestCase
 
     private $genre;
     private $sendData;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->genre = factory(Genre::class)->create([
-            "is_active" => true
-        ]);
-        $this->sendData = [
-            "name" => 'test'
-        ];
-    }
 
     public function testIndex()
     {
@@ -97,7 +86,7 @@ class GenreControllerTest extends TestCase
                 'test_data' => $sendActiveFalse
             ]
         ];
-        $this->assertSave($data);
+        $this->assertSaveIfSyncData($data, ["categories"]);
         $this->assertCount(1, $this->genre->categories()->get()->toArray());
     }
 
@@ -122,6 +111,17 @@ class GenreControllerTest extends TestCase
             ->assertStatus(204);
         $this->assertNull(Genre::find($this->genre->id));
         $this->assertNotNull(Genre::withTrashed()->find($this->genre->id));
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->genre = factory(Genre::class)->create([
+            "is_active" => true
+        ]);
+        $this->sendData = [
+            "name" => 'test'
+        ];
     }
 
     protected function routeStore()

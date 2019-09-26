@@ -4,18 +4,16 @@
 namespace Tests\Traits;
 
 use Illuminate\Http\Request;
+use Mockery;
 use Tests\Exceptions\TestException;
 
 trait MockController
 {
-    protected abstract function controller();
-    protected abstract function model();
-
     protected function assertRollbackStore()
     {
         $controller = $this->mockControllerToHandleRelations("rulesStore");
 
-        $request = \Mockery::mock(Request::class);
+        $request = Mockery::mock(Request::class);
         try {
             $controller->store($request);
         } catch (TestException $exception) {
@@ -23,21 +21,9 @@ trait MockController
         }
     }
 
-    protected function assertRollbackUpdate($collection)
-    {
-        $controller = $this->mockControllerToHandleRelations("rulesUpdate");
-
-        $request = \Mockery::mock(Request::class);
-        try {
-            $controller->update($request, $collection->id);
-        } catch (TestException $exception){
-            $this->assertEquals($collection->refresh()->toArray(), $this->model()::find($collection->id)->toArray());
-        }
-    }
-
     protected function mockControllerToHandleRelations($rulesToMock)
     {
-        $controller = \Mockery::mock($this->controller())
+        $controller = Mockery::mock($this->controller())
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
 
@@ -54,5 +40,21 @@ trait MockController
             ->andThrow(new TestException());
 
         return $controller;
+    }
+
+    protected abstract function controller();
+
+    protected abstract function model();
+
+    protected function assertRollbackUpdate($collection)
+    {
+        $controller = $this->mockControllerToHandleRelations("rulesUpdate");
+
+        $request = Mockery::mock(Request::class);
+        try {
+            $controller->update($request, $collection->id);
+        } catch (TestException $exception) {
+            $this->assertEquals($collection->refresh()->toArray(), $this->model()::find($collection->id)->toArray());
+        }
     }
 }
