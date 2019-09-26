@@ -86,7 +86,7 @@ class GenreControllerTest extends TestCase
                 'test_data' => $sendActiveFalse
             ]
         ];
-        $this->assertSave($data);
+        $this->assertSaveIfSyncData($data, ["categories"]);
         $this->assertCount(1, $this->genre->categories()->get()->toArray());
     }
 

@@ -155,7 +155,7 @@ class VideoControllerTest extends TestCase
             ],
         ];
 
-        $this->assertSave($data);
+        $this->assertSaveIfSyncData($data, ["categories", "genres"]);
         $this->assertCount(1, $this->video->categories()->get()->toArray());
         $this->assertCount(1, $this->video->genres()->get()->toArray());
     }

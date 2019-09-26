@@ -19,6 +19,7 @@ trait TestSaves
                 "created_at",
                 "updated_at"
             ]);
+
             $response = $this->assertUpdate(
                 $value['send_data'],
                 $value['test_data'] + ['deleted_at' => null]
@@ -27,6 +28,44 @@ trait TestSaves
                 "created_at",
                 "updated_at"
             ]);
+        }
+    }
+
+    protected function assertSaveIfSyncData(array $data, array $syncFields)
+    {
+        foreach ($data as $value) {
+            $response = $this->assertStore(
+                $value['send_data'],
+                $value['test_data'] + ['deleted_at' => null]
+            );
+            $response->assertJsonStructure([
+                "created_at",
+                "updated_at"
+            ]);
+            $this->assertSyncData($response, $syncFields, 1);
+            $response = $this->assertUpdate(
+                $value['send_data'],
+                $value['test_data'] + ['deleted_at' => null]
+            );
+            $this->assertSyncData($response, $syncFields, 1);
+            $response->assertJsonStructure([
+                "created_at",
+                "updated_at"
+            ]);
+        }
+    }
+
+    protected function assertSyncData(TestResponse $response, array $syncFields, int $expectedCount)
+    {
+        $content = json_decode($response->getContent());
+        $this->assertSync($content->id, $syncFields, $expectedCount);
+    }
+
+    protected function assertSync(String $id, array $fields, int $expectedCount)
+    {
+        $data = $this->model()::find($id);
+        foreach ($fields as $field) {
+            $this->assertCount($expectedCount, $data->{$field}()->get()->toArray());
         }
     }
 
