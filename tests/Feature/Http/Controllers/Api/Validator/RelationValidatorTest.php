@@ -100,7 +100,8 @@ class RelationValidatorTest extends TestCase
         $this->makeSync($genres_ids, $categories_ids);
         $categories_ids_not_related = $this->makeCategories(1);
         $data = [
-            "categories_id" => array_merge($this->makeIdsArray($categories_ids), $this->makeIdsArray($categories_ids_not_related)),
+            "categories_id" => array_merge($this->makeIdsArray($categories_ids),
+                $this->makeIdsArray($categories_ids_not_related)),
             "genres_id" => $this->makeIdsArray($genres_ids)
         ];
 
@@ -134,7 +135,7 @@ class RelationValidatorTest extends TestCase
 
     protected function makeIdsArray(Collection $collection): array
     {
-        return $collection->map(function($value) {
+        return $collection->map(function ($value) {
             return $value->id;
         })->toArray();
     }
