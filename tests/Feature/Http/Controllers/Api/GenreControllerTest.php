@@ -69,6 +69,9 @@ class GenreControllerTest extends TestCase
         $field = "categories_id";
         $this->assertArrayField($field);
         $this->assertExistsField($field);
+        $category = factory(Category::class)->create();
+        $category->delete();
+        $this->assertExistsField($field, $category->id);
     }
 
     public function testSave()

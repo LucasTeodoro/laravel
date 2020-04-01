@@ -60,10 +60,10 @@ trait TestValidations
 
     protected abstract function routeUpdate();
 
-    protected function assertExistsField($field)
+    protected function assertExistsField($field, $value = 100)
     {
         $data = [
-            $field => [100]
+            $field => [$value]
         ];
         $this->assertInvalidationInStoreAction($data, "exists");
         $this->assertInvalidationInUpdateAction($data, "exists");

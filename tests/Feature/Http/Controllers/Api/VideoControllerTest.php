@@ -84,6 +84,9 @@ class VideoControllerTest extends TestCase
         $field = "categories_id";
         $this->assertArrayField($field);
         $this->assertExistsField($field);
+        $category = factory(Category::class)->create();
+        $category->delete();
+        $this->assertExistsField($field, $category->id);
     }
 
     public function testInvalidationGenresIdField()
@@ -91,6 +94,9 @@ class VideoControllerTest extends TestCase
         $field = "genres_id";
         $this->assertArrayField($field);
         $this->assertExistsField($field);
+        $genre = factory(Genre::class)->create();
+        $genre->delete();
+        $this->assertExistsField($field, $genre->id);
     }
 
     public function testInvalidationRelationsFields()
