@@ -42,12 +42,12 @@ trait TestSaves
                 "created_at",
                 "updated_at"
             ]);
-            $this->assertSyncData($response, $syncFields, $data);
+            $this->assertSyncData($response, $syncFields, $value["send_data"]);
             $response = $this->assertUpdate(
                 $value['send_data'],
                 $value['test_data'] + ['deleted_at' => null]
             );
-            $this->assertSyncData($response, $syncFields, $data);
+            $this->assertSyncData($response, $syncFields, $value["send_data"]);
             $response->assertJsonStructure([
                 "created_at",
                 "updated_at"
@@ -65,7 +65,7 @@ trait TestSaves
     {
         $model = $this->model()::find($id);
         foreach ($fields as $field) {
-            $this->assertCount(count($data[\Str::singular($field) . "_id"]), $model->{$field}()->get()->toArray());
+            $this->assertCount(count($data[$field . "_id"]), $model->{$field}()->get()->toArray());
         }
     }
 
