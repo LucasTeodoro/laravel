@@ -3,8 +3,6 @@
 
 namespace App\Http\Controllers\Api\Traits;
 
-
-use DB;
 use Illuminate\Http\Request;
 
 trait Transaction
@@ -13,7 +11,7 @@ trait Transaction
     {
         $validatedData = $this->validate($request, $this->rulesStore());
         $self = $this;
-        $obj = DB::transaction(function () use ($request, $validatedData, $self) {
+        $obj = \DB::transaction(function () use ($request, $validatedData, $self) {
             $obj = $this->model()::create($validatedData);
             $self->handleRelations($obj, $request);
 
@@ -38,7 +36,7 @@ trait Transaction
         $validatedData = $this->validate($request, $this->rulesUpdate());
         $self = $this;
         $dataToBeUpdated = $this->findOrFail($id);
-        $dataToBeUpdated = DB::transaction(function () use ($request, $validatedData, $dataToBeUpdated, $self) {
+        $dataToBeUpdated = \DB::transaction(function () use ($request, $validatedData, $dataToBeUpdated, $self) {
             $dataToBeUpdated->update($validatedData);
             $self->handleRelations($dataToBeUpdated, $request);
 

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class GenresHasCategoriesRuleTest extends TestCase
 {
 
-    protected function assertReflectionClass(MockInterface $rule, string $property) {
+    protected function assertReflectionClass($rule, string $property) {
         $reflectionClass =  new \ReflectionClass(GenresHasCategoriesRule::class);
         $reflectionProperty = $reflectionClass->getProperty($property);
         $reflectionProperty->setAccessible(true);
@@ -26,11 +26,13 @@ class GenresHasCategoriesRuleTest extends TestCase
             ->shouldAllowMockingProtectedMethods();
     }
 
-    protected function mockWithProperties(array $values, string $method, array $args, Collection $return)
+    protected function mockWithProperties(array $values, string $method, Collection $return): MockInterface
     {
-        return $this->createRuleMock($values)->shouldReceive($method)
-            ->withArgs($args)
+        $rule = $this->createRuleMock($values);
+        $rule->shouldReceive($method)
+            ->withAnyArgs()
             ->andReturn($return);
+        return $rule;
     }
 
     public function testCategoriesIdField()
@@ -41,7 +43,7 @@ class GenresHasCategoriesRuleTest extends TestCase
 
     public function testeGenresIdField()
     {
-        $rule = $this->mockWithProperties([], "getRows", null, collect());
+        $rule = $this->mockWithProperties([], "getRows", collect());
 
 
         $rule->passes('', [1, 1, 2, 2]);
@@ -60,20 +62,29 @@ class GenresHasCategoriesRuleTest extends TestCase
 
     public function testPassesReturnsFalseWhenGetRowsIsEmpty()
     {
-        $rule = $this->mockWithProperties([1], "getRows", null, collect());
+        $rule = $this->mockWithProperties([1], "getRows", collect());
         $this->assertFalse($rule->passes('', [1]));
     }
 
     public function testPassesReturnsFalseWhenHasCategoriesWithoutGenres()
     {
-        $rule = $this->mockWithProperties([1, 2], "getRows", null, collect(["category_id" => 1]));
+        $rule = $this->mockWithProperties([1, 2], "getRows", collect(["category_id" => 1]));
 
         $this->assertFalse($rule->passes('', [1]));
     }
 
     public function testPassesIsValid()
     {
-        $rule = $this->mockWithProperties([1, 2], "getRows", null, collect([
+        $rule = $this->mockWithProperties([1, 2], "getRows", collect([
+            ["category_id" => 1],
+            ["category_id" => 2]
+        ]));
+
+        $this->assertTrue($rule->passes('', [1]));
+
+        $rule = $this->mockWithProperties([1, 2], "getRows", collect([
+            ["category_id" => 1],
+            ["category_id" => 2],
             ["category_id" => 1],
             ["category_id" => 2]
         ]));
