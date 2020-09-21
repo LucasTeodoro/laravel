@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\Traits\Transaction;
 use App\Models\Video;
+use App\Rules\GenresHasCategoriesRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 
 class VideoController extends BasicCrudController
 {
-    use Transaction;
     private $rules;
 
     public function __construct()
     {
-        Validator::extend("relations", 'App\Http\Controllers\Api\Validator\RelationValidator@relations');
         $this->rules = [
             'title' => 'required|max:255',
             'description' => 'required',
@@ -23,15 +21,34 @@ class VideoController extends BasicCrudController
             'opened' => 'boolean',
             'rating' => 'required|in:' . implode(",", Video::RATING_LIST),
             'duration' => 'required|integer',
-            'categories_id' => 'required|array|exists:categories,id,deleted_at,NULL|relations:genres_id',
-            'genres_id' => 'required|array|exists:genres,id,deleted_at,NULL|relations:categories_id'
+            'categories_id' => 'required|array|exists:categories,id,deleted_at,NULL',
+            'genres_id' => 'required|array|exists:genres,id,deleted_at,NULL'
         ];
     }
 
-    protected function handleRelations(Video $video, Request $request)
+    public function store(Request $request)
     {
-        $video->categories()->sync($request->get('categories_id'));
-        $video->genres()->sync($request->get('genres_id'));
+        $this->addRuleIfGenreHasCategories($request);
+        $validatedData = $this->validate($request, $this->rulesStore());
+        $obj = $this->model()::create($validatedData);
+        $obj->refresh();
+        return $obj;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $obj = $this->findOrFail($id);
+        $this->addRuleIfGenreHasCategories($request);
+        $validatedData = $this->validate($request, $this->rulesUpdate());
+        $obj->update($validatedData);
+        return $obj;
+    }
+
+    protected function addRuleIfGenreHasCategories(Request $request)
+    {
+        $categoriesId = $request->get("categories_id");
+        $categoriesId = is_array($categoriesId) ? $categoriesId : [];
+        $this->rules["genres_id"][] = new GenresHasCategoriesRule($categoriesId);
     }
 
     protected function model()
