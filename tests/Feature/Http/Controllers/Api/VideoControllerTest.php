@@ -179,15 +179,15 @@ class VideoControllerTest extends TestCase
         $this->assertNotNull(Video::withTrashed()->find($this->video->id));
     }
 
-    public function testRollbackStore()
-    {
-        $this->assertRollbackStore();
-    }
-
-    public function testRollbackUpdate()
-    {
-        $this->assertRollbackUpdate($this->video);
-    }
+//    public function testRollbackStore()
+//    {
+//        $this->assertRollbackStore();
+//    }
+//
+//    public function testRollbackUpdate()
+//    {
+//        $this->assertRollbackUpdate($this->video);
+//    }
 
     protected function setUp(): void
     {
