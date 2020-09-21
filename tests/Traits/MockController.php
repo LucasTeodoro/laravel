@@ -14,6 +14,9 @@ trait MockController
         $controller = $this->mockControllerToHandleRelations("rulesStore");
 
         $request = Mockery::mock(Request::class);
+        $request->shouldReceive("get")
+            ->withAnyArgs()
+            ->andReturnNull();
         $hasError = false;
         try {
             $controller->store($request);
@@ -55,6 +58,9 @@ trait MockController
         $controller = $this->mockControllerToHandleRelations("rulesUpdate");
 
         $request = Mockery::mock(Request::class);
+        $request->shouldReceive("get")
+            ->withAnyArgs()
+            ->andReturnNull();
         $hasError = false;
         try {
             $controller->update($request, $collection->id);

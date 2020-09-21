@@ -117,8 +117,8 @@ class VideoControllerTest extends TestCase
 
         ];
         foreach ($data as $value) {
-            $this->assertInvalidationInStoreAction($value, "relations");
-            $this->assertInvalidationInUpdateAction($value, "relations");
+            $this->assertInvalidationInStoreAction($value, "genres_has_categories");
+            $this->assertInvalidationInUpdateAction($value, "genres_has_categories");
         }
     }
 
