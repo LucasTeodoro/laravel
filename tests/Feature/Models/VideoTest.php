@@ -78,7 +78,7 @@ class VideoTest extends TestCase
         $hasError = false;
         try {
             Video::create($this->data + [
-                    "categories_id" => [1,2,3],
+                    "categories_id" => [1,2,3]
                 ]);
         } catch (QueryException $e) {
             $this->assertCount(0, Video::all());
@@ -205,7 +205,7 @@ class VideoTest extends TestCase
         $this->assertHasGenre($video->id, $genreId[0]);
 
         Video::handleRelations($video, [
-            "categories_id" => [$genreId[1], $genreId[2]]
+            "genres_id" => [$genreId[1], $genreId[2]]
         ]);
         $this->assertDatabaseMissing('category_video', [
             "genre_id" => $genreId[0],
