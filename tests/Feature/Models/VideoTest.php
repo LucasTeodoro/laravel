@@ -212,8 +212,8 @@ class VideoTest extends TestCase
             "genre_id" => $genreId[0],
             "video_id" => $video->id
         ]);
-        $this->assertHasCategory($video->id, $genreId[1]);
-        $this->assertHasCategory($video->id, $genreId[2]);
+        $this->assertHasGenre($video->id, $genreId[1]);
+        $this->assertHasGenre($video->id, $genreId[2]);
     }
 
     protected function assertHasCategory(string $video, string $category)
