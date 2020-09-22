@@ -8,6 +8,7 @@ use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
+use Illuminate\Database\QueryException;
 
 class VideoTest extends TestCase
 {
@@ -207,7 +208,7 @@ class VideoTest extends TestCase
         Video::handleRelations($video, [
             "genres_id" => [$genreId[1], $genreId[2]]
         ]);
-        $this->assertDatabaseMissing('category_video', [
+        $this->assertDatabaseMissing('genre_video', [
             "genre_id" => $genreId[0],
             "video_id" => $video->id
         ]);
