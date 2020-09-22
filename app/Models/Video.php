@@ -22,7 +22,8 @@ class Video extends Model
         'year_launched',
         'opened',
         'rating',
-        'duration'
+        'duration',
+        'video_file'
     ];
     protected $dates = ['deleted_at'];
     protected $casts = [
