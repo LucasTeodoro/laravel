@@ -11,6 +11,7 @@ use Tests\TestCase;
 use Tests\Traits\MockController;
 use Tests\Traits\TestSaves;
 use Tests\Traits\TestValidations;
+use Illuminate\Http\UploadedFile;
 
 class VideoControllerTest extends TestCase
 {
@@ -131,6 +132,28 @@ class VideoControllerTest extends TestCase
         $this->assertInvalidationInUpdateAction($data, "boolean");
     }
 
+    public function testInvalidationVideoFileField()
+    {
+        $data = [
+            "video_file" => "a"
+        ];
+        $this->assertInvalidationInStoreAction($data, "file");
+        $this->assertInvalidationInUpdateAction($data, "file");
+
+        $data = [
+            "video_file" => UploadedFile::fake()->create("video.jpeg")
+        ];
+        $this->assertInvalidationInStoreAction($data, "mimetypes", ["mimetypes" => "video/mp4"]);
+        $this->assertInvalidationInUpdateAction($data, "mimetypes", ["mimetypes" => "video/mp4"]);
+
+        $data = [
+            "video_file" => UploadedFile::fake()->create("video.mp4")->size(2048)
+        ];
+
+        $this->assertInvalidationInStoreAction($data, "max.file", ["max" => "1024"]);
+        $this->assertInvalidationInUpdateAction($data, "max.file", ["max" => "1024"]);
+    }
+
     public function testInvalidationRatingField()
     {
         $data = [
@@ -142,6 +165,8 @@ class VideoControllerTest extends TestCase
 
     public function testSave()
     {
+        \Storage::fake();
+        $file = UploadedFile::fake()->create("video.mp4");
         $category = factory(Category::class)->create();
         $genre = factory(Genre::class)->create();
         $genre->categories()->sync([$category->id]);
@@ -159,11 +184,16 @@ class VideoControllerTest extends TestCase
                 'send_data' => $this->sendData + $foreign + ["rating" => Video::RATING_LIST[1]],
                 'test_data' => $this->sendData + ["rating" => Video::RATING_LIST[1]]
             ],
+            [
+                'send_data' => $this->sendData + $foreign + ["video_file" => $file],
+                'test_data' => $this->sendData + ["video_file" => $file->hashName()]
+            ],
         ];
 
         $this->assertSaveIfSyncData($data, ["categories", "genres"]);
         $this->assertCount(1, $this->video->categories()->get()->toArray());
         $this->assertCount(1, $this->video->genres()->get()->toArray());
+        \Storage::assertExists("{$this->video->id}/{$file->hashName()}");
     }
 
     public function testDestroy()
