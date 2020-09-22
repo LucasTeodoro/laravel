@@ -143,8 +143,8 @@ class VideoControllerTest extends TestCase
         $data = [
             "video_file" => UploadedFile::fake()->create("video.jpeg")
         ];
-        $this->assertInvalidationInStoreAction($data, "mimetypes", ["mimetypes" => ["video/mp4"]]);
-        $this->assertInvalidationInUpdateAction($data, "mimetypes", ["mimetypes" => ["video/mp4"]]);
+        $this->assertInvalidationInStoreAction($data, "mimetypes");
+        $this->assertInvalidationInUpdateAction($data, "mimetypes");
 
         $data = [
             "video_file" => UploadedFile::fake()->create("video.mp4")->size(2048)
