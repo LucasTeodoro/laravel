@@ -126,7 +126,7 @@ class VideoTest extends TestCase
                     "categories_id" => [1,2,3],
                 ]);
         } catch (QueryException $e) {
-            $this->assertDatabaseHas('video', ['title' => $oldTitle]);
+            $this->assertDatabaseHas('videos', ['title' => $oldTitle]);
             $hasError = true;
         }
 
