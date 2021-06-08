@@ -3,3 +3,4 @@
 .docker/dbdata
 .docker/rddata
 .npm-cache
+.node_modules
