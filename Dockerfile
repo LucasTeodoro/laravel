@@ -1,7 +1,9 @@
 FROM php:7.3.6-fpm-alpine3.10
 
+RUN pecl install redis
 RUN apk add --no-cache openssl bash mysql-client nodejs npm
-RUN docker-php-ext-install pdo pdo_mysql
+RUN docker-php-ext-install pdo pdo_mysql redis
+RUN docker-php-ext-enable redis
 
 RUN touch /root/.bashrc | echo "PS1='\w\$ '" >> /root/.bashrc
 
