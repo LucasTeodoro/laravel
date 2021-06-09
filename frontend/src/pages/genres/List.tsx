@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import {Chip} from "@material-ui/core";
 import {MUIDataTableColumn} from "mui-datatables";
 import {format, parseISO} from "date-fns";
 import DefaultList from "../../components/List";
+import {Chip} from "@material-ui/core";
 
 const columnsDefinition: MUIDataTableColumn[] = [
     {
@@ -16,6 +16,15 @@ const columnsDefinition: MUIDataTableColumn[] = [
         options: {
             customBodyRender(value) {
                 return value ? <Chip label={"Sim"} color={"primary"} /> : <Chip label={"Não"} color={"secondary"} />;
+            }
+        }
+    },
+    {
+        name: "categories",
+        label: "Categorias",
+        options: {
+            customBodyRender(value) {
+                return value ? value.map((category: { name: string; }) => {return category.name}).join(",") : "";
             }
         }
     },
@@ -34,11 +43,11 @@ const List = () => {
     return (
         <DefaultList
             columnsDefinition={columnsDefinition}
-            pageTitle={"Listagem de categorias"}
-            createButtonTitle={"Adicionar categorias"}
-            createButtonURL={"/categories/create"}
-            tableTitle={"Listagem de categorias"}
-            pageURL={"categories"}
+            pageTitle={"Listagem de gêneros"}
+            createButtonTitle={"Adicionar gênero"}
+            createButtonURL={"/genres/create"}
+            tableTitle={"Listagem de gênero"}
+            pageURL={"genres"}
         />
     );
 };

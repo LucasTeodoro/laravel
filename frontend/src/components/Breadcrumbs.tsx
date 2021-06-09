@@ -72,7 +72,7 @@ export default function Breadcrumbs() {
         );
     };
     return (
-        <Container>
+        <Container maxWidth={"xl"}>
             <Box paddingBottom={2}>
                 <Route>
                     {({location}: {location: Location}) => makeBreadcrumbs(location)}

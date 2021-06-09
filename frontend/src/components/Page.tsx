@@ -14,7 +14,7 @@ type PageProps = {
 export const Page: React.FC<PageProps> = (props) => {
     const classes = useStyles();
     return (
-        <Container>
+        <Container maxWidth={"xl"}>
             <Typography className={classes.title} component="h1" variant="h5">
                 {props.title}
             </Typography>
