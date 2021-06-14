@@ -41,11 +41,11 @@ const Form: React.FC<Props> = (props) => {
         props.setValue("categories_id", event.target.value as string[]);
     };
     useEffect(() => {
+        props.setValue("categories_id", []);
         register(props.register, registerFields);
     }, [props]);
 
     useEffect(() => {
-        props.setValue("categories_id", []);
         categoryHttp.list().then(({data}) => {
             setCategoriesOptions(data);
         });
