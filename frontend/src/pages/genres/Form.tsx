@@ -1,9 +1,9 @@
 // @flow
 import * as React from 'react';
-import {Checkbox, FormControl, Input, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
+import {Checkbox, MenuItem, TextField} from "@material-ui/core";
 import {UseFormRegister, UseFormSetValue, UseFormWatch} from "react-hook-form/dist/types/form";
 import {useEffect} from "react";
-import {register, RegisterFields} from "../../util/form";
+import {register as utilRegister, RegisterFields} from "../../util/form";
 import categoryHttp from "../../util/http/category-http";
 
 interface Props {
@@ -33,17 +33,17 @@ const registerFields: RegisterFields[] = [
     }
 ]
 
-const Form: React.FC<Props> = (props) => {
+const Form: React.FC<Props> = ({setValue, register, watch}) => {
     const [categoriesOptions, setCategoriesOptions] = React.useState<string[]>([]);
-    const [categories, setCategories] = React.useState<string[]>([]);
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setCategories(event.target.value as string[]);
-        props.setValue("categories_id", event.target.value as string[]);
+        setValue("categories_id", event.target.value as string[], {
+            shouldValidate: true
+        });
     };
     useEffect(() => {
-        props.setValue("categories_id", []);
-        register(props.register, registerFields);
-    }, [props]);
+        utilRegister(register, registerFields);
+    }, [register, setValue]);
+
 
     useEffect(() => {
         categoryHttp.list().then(({data}) => {
@@ -58,32 +58,32 @@ const Form: React.FC<Props> = (props) => {
                 label={"Nome"}
                 variant={"outlined"}
                 fullWidth
-                onChange={(e) => props.setValue("name", e.target.value)}
+                onChange={(e) => setValue("name", e.target.value)}
             />
-            <FormControl
+            <TextField
+                select
+                label="Categorias"
+                name="categories_id"
+                value={watch('categories_id')}
+                onChange={handleChange}
                 fullWidth
-                margin={"normal"}
+                margin={'normal'}
                 variant={"outlined"}
+                SelectProps={{
+                    multiple: true
+                }}
             >
-                <InputLabel id="select-name">Categorias</InputLabel>
-                <Select
-                    label="categories_id"
-                    labelId={"select-name"}
-                    value={categories}
-                    multiple
-                    onChange={handleChange}
-                    input={<Input />}
-                >
-                    {
-                        categoriesOptions.map((value: any) => {
-                            return <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>;
-                        })
-                    }
-                </Select>
-            </FormControl>
+                <MenuItem value="" disabled><em>Selecione categorias</em></MenuItem>;
+                {
+                    categoriesOptions.map((value: any) => {
+                        return <MenuItem key={value.id} value={value.id}>{value.name}</MenuItem>;
+                    })
+                }
+            </TextField>
             <Checkbox
+                color={"primary"}
                 name="is_active"
-                onChange={(e) => props.setValue("is_active", e.target.checked)}
+                onChange={(e) => setValue("is_active", e.target.checked)}
                 defaultChecked
             />
             Ativo?

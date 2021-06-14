@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import {FormControl, InputLabel, Select, TextField} from "@material-ui/core";
+import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField} from "@material-ui/core";
 import {UseFormRegister, UseFormSetValue} from "react-hook-form/dist/types/form";
 import {useEffect} from "react";
 import {register as utilRegister, RegisterFields} from "../../util/form";
@@ -49,31 +49,24 @@ const Form: React.FC<Props> = ({register, setValue}) => {
                 fullWidth
                 onChange={(e) => setValue("name", e.target.value)}
             />
-            <FormControl
-                fullWidth
-                margin={"normal"}
-                variant="outlined"
-            >
-                <InputLabel id="select-name">Tipo</InputLabel>
-                <Select
-                    native
-                    label="type"
-                    labelId={"select-name"}
-                    variant={"outlined"}
+            <FormControl margin={"normal"} component="fieldset">
+                <FormLabel component="legend">Tipo</FormLabel>
+                <RadioGroup
+                    aria-label={"type"}
+                    name={"type"}
                     value={memberType}
                     onChange={handleChange}
-                    inputProps={{
-                        name: 'type',
-                        id: 'select-name',
-                    }}
                 >
-                    <option aria-label="None" value="" />
                     {
                         Object.keys(CastMemberTypeMap).map((value: any) => {
-                           return <option key={value} value={value}>{CastMemberTypeMap[value]}</option>
+                            return <FormControlLabel
+                                label={CastMemberTypeMap[value]}
+                                value={value}
+                                control={<Radio color={"primary"}/>}
+                            />
                         })
                     }
-                </Select>
+                </RadioGroup>
             </FormControl>
         </React.Fragment>
     );

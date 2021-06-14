@@ -47,7 +47,7 @@ const PageList = () => {
             pageTitle={"Listagem de elenco"}
             createButtonTitle={"Adicionar elenco"}
             createButtonURL={"/cast_members/create"}
-            tableTitle={"Listagem de elenco"}
+            tableTitle={""}
             data={data}
         />
     );

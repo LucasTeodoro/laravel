@@ -51,6 +51,7 @@ const Form: React.FC<Props> = (props) => {
                 onChange={(e) => props.setValue("description", e.target.value)}
             />
             <Checkbox
+                color={"primary"}
                 name="is_active"
                 onChange={(e) => props.setValue("is_active", e.target.checked)}
                 defaultChecked

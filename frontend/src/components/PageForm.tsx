@@ -23,7 +23,7 @@ const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit
     const classes = useStyles();
     const buttonProps: ButtonProps = {
         className: classes.submit,
-        variant: "outlined"
+        variant: "contained"
     }
     const {handleSubmit, getValues, setValue, register, watch} = useForm(formProps);
     return (
@@ -35,8 +35,20 @@ const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit
                     watch={watch}
                 />
                 <Box dir={"rtl"}>
-                    <Button {...buttonProps} onClick={() => onSubmit(getValues())}>Salvar</Button>
-                    <Button {...buttonProps} type={"submit"}>Salvar e continuar editando</Button>
+                    <Button
+                        color={"primary"}
+                        {...buttonProps}
+                        onClick={() => onSubmit(getValues())}
+                    >
+                        Salvar
+                    </Button>
+                    <Button
+                        color={"secondary"}
+                        {...buttonProps}
+                        type={"submit"}
+                    >
+                        Salvar e continuar editando
+                    </Button>
                 </Box>
             </form>
         </Page>

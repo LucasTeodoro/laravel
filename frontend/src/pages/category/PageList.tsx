@@ -43,7 +43,7 @@ const PageList = () => {
             pageTitle={"Listagem de categorias"}
             createButtonTitle={"Adicionar categorias"}
             createButtonURL={"/categories/create"}
-            tableTitle={"Listagem de categorias"}
+            tableTitle={""}
             data={data}
         />
     );
