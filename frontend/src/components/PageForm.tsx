@@ -15,23 +15,27 @@ const useStyles = makeStyles((theme: Theme) => {
 
 interface FormPageProps {
     pageTitle: string;
-    form: React.FC<any>;
+    Form: React.FC<any>;
     formProps?: UseFormProps
     onSubmit: any;
-};
-const PageForm: React.FC<FormPageProps> = (props) => {
+}
+const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit}) => {
     const classes = useStyles();
     const buttonProps: ButtonProps = {
         className: classes.submit,
         variant: "outlined"
     }
-    const {handleSubmit, getValues, setValue, register, watch} = useForm(props.formProps);
+    const {handleSubmit, getValues, setValue, register, watch} = useForm(formProps);
     return (
-        <Page title={props.pageTitle}>
-            <form onSubmit={handleSubmit(props.onSubmit)}>
-                {props.form({setValue, register, watch})}
+        <Page title={pageTitle}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <Form
+                    setValue={setValue}
+                    register={register}
+                    watch={watch}
+                />
                 <Box dir={"rtl"}>
-                    <Button {...buttonProps} onClick={() => props.onSubmit(getValues())}>Salvar</Button>
+                    <Button {...buttonProps} onClick={() => onSubmit(getValues())}>Salvar</Button>
                     <Button {...buttonProps} type={"submit"}>Salvar e continuar editando</Button>
                 </Box>
             </form>

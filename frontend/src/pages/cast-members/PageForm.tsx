@@ -16,7 +16,7 @@ const PageForm = () => {
         <DefaultForm
             onSubmit={onSubmit}
             pageTitle={"Adicionar elenco"}
-            form={Form}
+            Form={Form}
         />
     );
 };

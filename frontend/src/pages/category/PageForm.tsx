@@ -23,7 +23,7 @@ const PageForm = () => {
         <DefaultForm
             onSubmit={onSubmit}
             pageTitle={"Adicionar categoria"}
-            form={Form}
+            Form={Form}
             formProps={FormProps}
         />
     );

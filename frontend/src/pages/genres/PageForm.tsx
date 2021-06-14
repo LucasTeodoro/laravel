@@ -16,7 +16,7 @@ const PageForm = () => {
         <DefaultForm
             onSubmit={onSubmit}
             pageTitle={"Adicionar genêros"}
-            form={Form}
+            Form={Form}
         />
     );
 };

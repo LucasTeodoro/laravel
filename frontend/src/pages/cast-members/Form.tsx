@@ -3,7 +3,7 @@ import * as React from 'react';
 import {FormControl, InputLabel, Select, TextField} from "@material-ui/core";
 import {UseFormRegister, UseFormSetValue} from "react-hook-form/dist/types/form";
 import {useEffect} from "react";
-import {register, RegisterFields} from "../../util/form";
+import {register as utilRegister, RegisterFields} from "../../util/form";
 import {CastMemberTypeMap} from "./PageList";
 
 interface Props {
@@ -28,16 +28,16 @@ const registerFields: RegisterFields[] = [
     }
 ]
 
-const Form: React.FC<Props> = (props) => {
+const Form: React.FC<Props> = ({register, setValue}) => {
     useEffect(() => {
-        register(props.register, registerFields);
-    }, [props]);
+        utilRegister(register, registerFields);
+    }, [register]);
 
     const [memberType, setMemberType] = React.useState<string>("");
 
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setMemberType(event.target.value as string);
-        props.setValue("type", event.target.value);
+        setValue("type", event.target.value);
     };
 
     return (
@@ -47,7 +47,7 @@ const Form: React.FC<Props> = (props) => {
                 label={"Nome"}
                 variant={"outlined"}
                 fullWidth
-                onChange={(e) => props.setValue("name", e.target.value)}
+                onChange={(e) => setValue("name", e.target.value)}
             />
             <FormControl
                 fullWidth
