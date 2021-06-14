@@ -1,20 +1,17 @@
 import * as React from 'react';
 import MUIDataTable, {MUIDataTableColumn} from "mui-datatables";
 import {useEffect, useState} from "react";
-import {httpVideo} from "../http";
 
 type Props = {
-    url: string,
+    data: any[],
     columnsDefinitions: MUIDataTableColumn[],
     title?: string
 };
 const Index = (props: Props) => {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any[]>([]);
     useEffect(() => {
-        httpVideo.get(props.url).then(
-            response => setData(response.data)
-        )
-    }, [])
+        setData(props.data);
+    }, [props])
     return (
         <MUIDataTable
             columns={props.columnsDefinitions}

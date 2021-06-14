@@ -2,7 +2,14 @@
 import * as React from 'react';
 import {MUIDataTableColumn} from "mui-datatables";
 import {format, parseISO} from "date-fns";
-import DefaultList from "../../components/List";
+import DefaultList from "../../components/PageList";
+import castMemberHttp, {CastMember} from "../../util/http/cast-member-http";
+import {useEffect, useState} from "react";
+
+export const CastMemberTypeMap: any = {
+    1: "Diretor",
+    2: "Ator"
+}
 
 const columnsDefinition: MUIDataTableColumn[] = [
     {
@@ -14,7 +21,7 @@ const columnsDefinition: MUIDataTableColumn[] = [
         label: "Tipo",
         options: {
             customBodyRender(value) {
-                return value === 1 ? <span>Diretor</span> : <span>Ator</span>;
+                return CastMemberTypeMap[value];
             }
         }
     },
@@ -29,7 +36,11 @@ const columnsDefinition: MUIDataTableColumn[] = [
     }
 ]
 
-const List = () => {
+const PageList = () => {
+    const [data, setData] = useState<CastMember[]>([]);
+    useEffect(() => {
+        castMemberHttp.list<CastMember[]>().then(({data}) => setData(data));
+    }, []);
     return (
         <DefaultList
             columnsDefinition={columnsDefinition}
@@ -37,9 +48,9 @@ const List = () => {
             createButtonTitle={"Adicionar elenco"}
             createButtonURL={"/cast_members/create"}
             tableTitle={"Listagem de elenco"}
-            pageURL={"cast_members"}
+            data={data}
         />
     );
 };
 
-export default List;
+export default PageList;
