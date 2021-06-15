@@ -23,9 +23,10 @@ const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit
     const classes = useStyles();
     const buttonProps: ButtonProps = {
         className: classes.submit,
+        color: "secondary",
         variant: "contained"
     }
-    const {handleSubmit, getValues, setValue, register, watch} = useForm(formProps);
+    const {handleSubmit, getValues, setValue, register, watch, formState: {errors}} = useForm(formProps);
     return (
         <Page title={pageTitle}>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -33,17 +34,16 @@ const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit
                     setValue={setValue}
                     register={register}
                     watch={watch}
+                    errors={errors}
                 />
                 <Box dir={"rtl"}>
                     <Button
-                        color={"primary"}
                         {...buttonProps}
                         onClick={() => onSubmit(getValues())}
                     >
                         Salvar
                     </Button>
                     <Button
-                        color={"secondary"}
                         {...buttonProps}
                         type={"submit"}
                     >

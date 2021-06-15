@@ -1,5 +1,6 @@
 import {createMuiTheme, SimplePaletteColorOptions} from "@material-ui/core";
 import {PaletteOptions} from "@material-ui/core/styles/createPalette";
+import {green, red} from "@material-ui/core/colors";
 
 const palette: PaletteOptions = {
     primary: {
@@ -8,10 +9,18 @@ const palette: PaletteOptions = {
     },
     secondary: {
         main: "#4db5ab",
-        contrastText: "#ffffff"
+        contrastText: "#ffffff",
+        dark: "#055a52"
     },
     background: {
         default: "#efefef"
+    },
+    success: {
+        main: green["500"],
+        contrastText: "#ffffff"
+    },
+    error: {
+         main: red["500"]
     }
 }
 
@@ -31,13 +40,13 @@ const theme = createMuiTheme({
             icon: {
                 color: (palette!.primary as SimplePaletteColorOptions).main,
                 '&:hover, &:active, &:focus': {
-                    color:'#055a52'
+                    color: (palette!.primary as SimplePaletteColorOptions).dark
                 }
             },
             iconActive: {
-                color: '#055a52',
+                color: (palette!.primary as SimplePaletteColorOptions).dark,
                 '&:hover, &:active, &:focus': {
-                    color:'#055a52'
+                    color: (palette!.primary as SimplePaletteColorOptions).dark
                 }
             }
         },
@@ -98,6 +107,11 @@ const theme = createMuiTheme({
         MUIDataTablePagination: {
             root: {
                 color: (palette!.primary as SimplePaletteColorOptions).main
+            }
+        },
+        MuiInputBase: {
+            root: {
+                backgroundColor: "#ffffff"
             }
         }
     }

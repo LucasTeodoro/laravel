@@ -18,10 +18,11 @@ type Props = {
 const PageList = (props: Props) => {
     return (
         <Page title={props.pageTitle}>
-            <Box dir={'rtl'}>
+            <Box dir={'rtl'} paddingBottom={2}>
                 <Fab
                     title={props.createButtonTitle}
                     size={"small"}
+                    color={"secondary"}
                     component={Link}
                     to={props.createButtonURL}
                 >
