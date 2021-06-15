@@ -46,6 +46,7 @@ const Form: React.FC<FormProps> = ({register, setValue, errors}) => {
                     {
                         Object.keys(CastMemberTypeMap).map((value: any) => {
                             return <FormControlLabel
+                                key={value}
                                 label={CastMemberTypeMap[value]}
                                 value={value}
                                 control={<Radio color={"primary"}/>}

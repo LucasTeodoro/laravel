@@ -5,7 +5,7 @@ import Form from "./Form";
 import castMemberHttp, {CastMember} from "../../util/http/cast-member-http";
 import {UseFormProps} from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import * as yup from "../../util/vendor/yup";
 
 const schema = yup.object().shape({
     name: yup.string().required(),

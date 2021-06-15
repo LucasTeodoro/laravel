@@ -4,7 +4,7 @@ import DefaultForm from '../../components/PageForm';
 import Form from "./Form";
 import {UseFormProps} from "react-hook-form";
 import categoryHttp, {Category} from "../../util/http/category-http";
-import * as yup from "yup";
+import * as yup from "../../util/vendor/yup";
 import {yupResolver} from "@hookform/resolvers/yup";
 
 const schema = yup.object().shape({
