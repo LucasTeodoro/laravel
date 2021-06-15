@@ -1,15 +1,32 @@
-import {setLocale} from "yup";
+import * as yup from "yup";
 
-setLocale({
+yup.setLocale({
     mixed: {
-        require: '${path} é requerido'
+      required: "${path} é requirido"
     },
     string: {
-        max: '${path} precisa ter no máximo ${max} caracteres',
+        required: "${path} e requi"
     },
-    number: {
-        min: '${path} precisa ter um mínimo de ${min} caracteres'
+    array: {
+        length: "${path} deve ter pelo menos 1 item"
     }
 });
+const name = yup.string().label("Nome").required();
+const is_active = yup.boolean();
 
-export * from 'yup';
+export const CategorySchema = yup.object().shape({
+    name,
+    description: yup.string(),
+    is_active
+});
+
+export const CastMemberSchema = yup.object().shape({
+    name,
+    type: yup.number().required()
+});
+
+export const GenreSchema = yup.object().shape({
+    name,
+    categories_id: yup.array().label("Categoria").required().length(1),
+    is_active
+});

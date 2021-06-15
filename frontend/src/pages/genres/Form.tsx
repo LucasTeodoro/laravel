@@ -28,7 +28,7 @@ const Form: React.FC<FormProps> = ({setValue, register, watch, errors}) => {
             setCategoriesOptions(data);
         });
     }, []);
-
+    console.log(errors);
     return (
         <React.Fragment>
             <TextField

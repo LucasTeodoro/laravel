@@ -5,14 +5,11 @@ import Form from "./Form";
 import castMemberHttp, {CastMember} from "../../util/http/cast-member-http";
 import {UseFormProps} from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from "../../util/vendor/yup";
+import {CastMemberSchema} from "../../util/vendor/yup";
 
-const schema = yup.object().shape({
-    name: yup.string().required(),
-    type: yup.number().required()
-});
+
 const FormProps: UseFormProps = {
-    resolver: yupResolver(schema),
+    resolver: yupResolver(CastMemberSchema),
 }
 
 const PageForm = () => {
