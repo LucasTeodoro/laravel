@@ -2,8 +2,9 @@
 import * as React from 'react';
 import {Page} from "./Page";
 import {Box, Button, ButtonProps, makeStyles, Theme} from "@material-ui/core";
-import {useForm} from "react-hook-form";
+import {FormProvider, useForm} from "react-hook-form";
 import {UseFormProps} from "react-hook-form/dist/types";
+import {useEffect} from "react";
 
 const useStyles = makeStyles((theme: Theme) => {
     return {
@@ -16,30 +17,37 @@ const useStyles = makeStyles((theme: Theme) => {
 interface FormPageProps {
     pageTitle: string;
     Form: React.FC<any>;
-    formProps?: UseFormProps
+    formProps?: UseFormProps;
     onSubmit: any;
+    data?: any;
+    loading?: boolean
 }
-const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit}) => {
+const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit, data, loading}) => {
     const classes = useStyles();
     const buttonProps: ButtonProps = {
         className: classes.submit,
         color: "secondary",
-        variant: "contained"
+        variant: "contained",
+        disabled: loading
     }
-    const {handleSubmit, getValues, setValue, register, watch, formState: {errors}} = useForm(formProps);
+    const methods = useForm(formProps);
+    useEffect(() => {
+        if(data) {
+            methods.reset(data);
+        }
+    }, [data]);
+
     return (
         <Page title={pageTitle}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(onSubmit)}>
                 <Form
-                    setValue={setValue}
-                    register={register}
-                    watch={watch}
-                    errors={errors}
+                    loading={loading}
                 />
                 <Box dir={"rtl"}>
                     <Button
                         {...buttonProps}
-                        onClick={() => onSubmit(getValues())}
+                        onClick={() => onSubmit(methods.getValues())}
                     >
                         Salvar
                     </Button>
@@ -51,6 +59,7 @@ const PageForm: React.FC<FormPageProps> = ({pageTitle, Form, formProps, onSubmit
                     </Button>
                 </Box>
             </form>
+            </FormProvider>
         </Page>
     );
 };

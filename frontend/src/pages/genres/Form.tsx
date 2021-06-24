@@ -1,9 +1,10 @@
 // @flow
 import * as React from 'react';
-import {Checkbox, MenuItem, TextField} from "@material-ui/core";
+import {Checkbox, FormControlLabel, MenuItem, TextField} from "@material-ui/core";
 import {useEffect} from "react";
 import {register as utilRegister, RegisterFields, FormProps} from "../../util/form";
 import categoryHttp from "../../util/http/category-http";
+import {useFormContext, useFormState} from "react-hook-form";
 
 const registerFields: RegisterFields[] = [
     {
@@ -17,7 +18,9 @@ const registerFields: RegisterFields[] = [
     }
 ]
 
-const Form: React.FC<FormProps> = ({setValue, register, watch, errors}) => {
+const Form: React.FC<FormProps> = ({loading}) => {
+    const {setValue, register, watch} = useFormContext();
+    const {errors} = useFormState();
     const [categoriesOptions, setCategoriesOptions] = React.useState<string[]>([]);
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setValue("categories_id", event.target.value as string[]);
@@ -28,25 +31,27 @@ const Form: React.FC<FormProps> = ({setValue, register, watch, errors}) => {
             setCategoriesOptions(data);
         });
     }, []);
-    console.log(errors);
+
     return (
         <React.Fragment>
             <TextField
-                inputRef={fieldRegister["name"]}
+                inputRef={fieldRegister["name"].ref}
                 name={"name"}
                 label={"Nome"}
                 variant={"outlined"}
                 fullWidth
-                onChange={(e) => setValue("name", e.target.value)}
+                onChange={fieldRegister["name"].onChange}
+                disabled={loading}
                 error={errors.name !== undefined}
                 helperText={errors.name && errors.name.message}
+                InputLabelProps={{shrink: !!watch("name")}}
             />
             <TextField
-                inputRef={fieldRegister["categories_id"]}
+                inputRef={fieldRegister["categories_id"].ref}
                 select
                 label="Categorias"
                 name="categories_id"
-                value={watch!('categories_id')}
+                value={watch('categories_id')}
                 onChange={handleChange}
                 fullWidth
                 margin={'normal'}
@@ -54,6 +59,7 @@ const Form: React.FC<FormProps> = ({setValue, register, watch, errors}) => {
                 SelectProps={{
                     multiple: true
                 }}
+                disabled={loading}
                 error={errors.categories_id !== undefined}
                 helperText={errors.categories_id && errors.categories_id.message}
             >
@@ -64,14 +70,20 @@ const Form: React.FC<FormProps> = ({setValue, register, watch, errors}) => {
                     })
                 }
             </TextField>
-            <Checkbox
-                ref={fieldRegister["is_active"]}
-                color={"primary"}
-                name="is_active"
-                onChange={(e) => setValue("is_active", e.target.checked)}
-                defaultChecked
+            <FormControlLabel
+                disabled={loading}
+                control={
+                    <Checkbox
+                        color={"primary"}
+                        name="is_active"
+                        onChange={(e) => setValue("is_active", e.target.checked)}
+                        checked={watch("is_active")}
+                        ref={fieldRegister["is_active"].ref}
+                    />
+                }
+                label={"Ativo?"}
+                labelPlacement={"end"}
             />
-            Ativo?
         </React.Fragment>
     );
 };

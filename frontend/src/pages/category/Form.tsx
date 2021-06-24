@@ -1,7 +1,8 @@
 // @flow
 import * as React from 'react';
-import {Checkbox, TextField} from "@material-ui/core";
+import {Checkbox, FormControlLabel, TextField} from "@material-ui/core";
 import {FormProps, register as utilRegister, RegisterFields} from "../../util/form";
+import {useFormContext, useFormState} from "react-hook-form";
 
 const registerFields: RegisterFields[] = [
     {
@@ -15,23 +16,27 @@ const registerFields: RegisterFields[] = [
     }
 ]
 
-const Form: React.FC<FormProps> = ({register, setValue, errors}) => {
+const Form: React.FC<FormProps> = ({loading}) => {
+    const {register, setValue, watch} = useFormContext();
+    const { errors } = useFormState();
     const fieldRegister = utilRegister(register, registerFields);
 
     return (
         <React.Fragment>
             <TextField
-                inputRef={fieldRegister["name"]}
                 name={"name"}
                 label={"Nome"}
+                inputRef={fieldRegister["name"].ref}
                 variant={"outlined"}
                 fullWidth
-                onChange={(e) => setValue("name", e.target.value)}
+                onChange={fieldRegister["name"].onChange}
+                disabled={loading}
                 error={errors.name !== undefined}
                 helperText={errors.name && errors.name.message}
+                InputLabelProps={{shrink: !!watch("name")}}
             />
             <TextField
-                inputRef={fieldRegister["description"]}
+                inputRef={fieldRegister["description"].ref}
                 name={"description"}
                 label={"Descrição"}
                 variant={"outlined"}
@@ -39,18 +44,26 @@ const Form: React.FC<FormProps> = ({register, setValue, errors}) => {
                 margin={"normal"}
                 fullWidth
                 multiline
-                onChange={(e) => setValue("description", e.target.value)}
+                onChange={fieldRegister["description"].onChange}
+                disabled={loading}
                 error={errors.description !== undefined}
                 helperText={errors.description && errors.description.message}
+                InputLabelProps={{shrink: !!watch("description")}}
             />
-            <Checkbox
-                ref={fieldRegister["is_active"]}
-                color={"primary"}
-                name="is_active"
-                onChange={(e) => setValue("is_active", e.target.checked)}
-                defaultChecked
+            <FormControlLabel
+                disabled={loading}
+                control={
+                    <Checkbox
+                        color={"primary"}
+                        name="is_active"
+                        onChange={(e) => setValue("is_active", e.target.checked)}
+                        checked={watch("is_active")}
+                        ref={fieldRegister["is_active"].ref}
+                    />
+                }
+                label={"Ativo?"}
+                labelPlacement={"end"}
             />
-            Ativo?
         </React.Fragment>
     );
 };

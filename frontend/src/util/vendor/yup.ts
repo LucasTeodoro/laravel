@@ -8,7 +8,7 @@ yup.setLocale({
         required: "${path} e requi"
     },
     array: {
-        length: "${path} deve ter pelo menos 1 item"
+        min: "${path} deve ter pelo menos 1 item"
     }
 });
 const name = yup.string().label("Nome").required();
@@ -27,6 +27,6 @@ export const CastMemberSchema = yup.object().shape({
 
 export const GenreSchema = yup.object().shape({
     name,
-    categories_id: yup.array().label("Categoria").required().length(1),
+    categories_id: yup.array().label("Categoria").required().min(1),
     is_active
 });

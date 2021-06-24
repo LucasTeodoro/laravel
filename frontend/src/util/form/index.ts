@@ -1,13 +1,9 @@
 import {RegisterOptions} from "react-hook-form/dist/types/validator";
-import {UseFormRegister, UseFormSetValue, UseFormWatch} from "react-hook-form/dist/types/form";
-import {FieldErrors} from "react-hook-form/dist/types/errors";
+import {UseFormRegister} from "react-hook-form/dist/types/form";
 
 
 export interface FormProps {
-    setValue: UseFormSetValue<any>
-    register: UseFormRegister<any>
-    watch?: UseFormWatch<any>
-    errors: FieldErrors
+    loading?: boolean
 }
 
 export interface RegisterFields {
