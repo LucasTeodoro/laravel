@@ -1,14 +1,16 @@
 // @flow
 import * as React from 'react';
-import DefaultForm from '../../components/PageForm';
+import DefaultForm from '../../components/DefaultPageForm';
 import Form from "./Form";
 import castMemberHttp from "../../util/http/cast-member-http";
 import {UseFormProps} from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import {CastMemberSchema} from "../../util/vendor/yup";
 import {useHistory, useParams} from "react-router-dom";
-import {useSnackbar} from "notistack";
 import {useEffect, useState} from "react";
+import {getData, Submit} from "../../util/form";
+import {useSnackbar} from "notistack";
+import {SubmitActions} from "../../components/SubmitActions";
 
 
 const FormProps: UseFormProps = {
@@ -20,50 +22,52 @@ const httpProvider = castMemberHttp;
 
 const PageForm = () => {
     const { id } = useParams<{ id: string }>();
-    const history = useHistory();
     const snackbar = useSnackbar();
-    const [castMember, setcastMember] = useState<{id: string} | null>(null);
+    const history = useHistory();
+    const [castMember, setCastMember] = useState<{id: string} | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [isSubscribed, setIsSubscribed] = useState(true);
     useEffect(() => {
         if(!id) return;
-        setLoading(true);
-        httpProvider.get(id)
-            .then(({data}) => {
-                setcastMember(data);
-            }).finally(() => setLoading(false));
-    }, [id]);
-    function onSubmit(formData: any, event: any) {
-        setLoading(true);
-        const http = !castMember
-            ? httpProvider.create(formData)
-            : httpProvider.update(castMember.id, formData);
+        getData({
+            httpProvider,
+            setValue: setLoading,
+            setData: setCastMember,
+            id,
+            snackbar,
+            isSubscribed: () => {return isSubscribed;}
+        });
 
-        http
-            .then(({data}) => {
-                snackbar.enqueueSnackbar("Elenco salvo com sucesso.", {variant: "success"})
-                setTimeout(() => {
-                    event ? (
-                        castMember
-                            ? history.replace(`/${url}/${data.id}/edit`)
-                            : history.push(`/${url}/${data.id}/edit`)
-                    ) : history.push(`/${url}`);
-                });
-            })
-            .catch(() => {
-                snackbar.enqueueSnackbar("Não foi possivel salvar o elenco.", {variant: "error"})
-            })
-            .finally(() => setLoading(false));
+        return () => {
+            setIsSubscribed(false);
+        };
+    }, [id]);
+    async function onSubmit(formData: any, event: any) {
+        await Submit(
+            httpProvider,
+            formData,
+            url,
+            setLoading,
+            event,
+            castMember,
+            snackbar,
+            history,
+            "Elenco salvo com sucesso.",
+            "Não foi possivel salvar o elenco."
+        );
     }
 
     return (
         <DefaultForm
             onSubmit={onSubmit}
             pageTitle={!id ? "Adicionar elenco" : "Editar elenco"}
-            Form={Form}
-            formProps={FormProps}
             data={castMember}
             loading={loading}
-        />
+            UseFormMethods={}
+        >
+            <Form />
+            <SubmitActions handleSave={() => {}} />
+        </DefaultForm>
     );
 };
 

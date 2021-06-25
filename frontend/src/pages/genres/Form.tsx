@@ -1,10 +1,11 @@
 // @flow
 import * as React from 'react';
 import {Checkbox, FormControlLabel, MenuItem, TextField} from "@material-ui/core";
-import {useEffect} from "react";
-import {register as utilRegister, RegisterFields, FormProps} from "../../util/form";
+import {useEffect, useState} from "react";
+import {register as utilRegister, RegisterFields, FormProps, getData} from "../../util/form";
 import categoryHttp from "../../util/http/category-http";
 import {useFormContext, useFormState} from "react-hook-form";
+import {useSnackbar} from "notistack";
 
 const registerFields: RegisterFields[] = [
     {
@@ -21,15 +22,26 @@ const registerFields: RegisterFields[] = [
 const Form: React.FC<FormProps> = ({loading}) => {
     const {setValue, register, watch} = useFormContext();
     const {errors} = useFormState();
+    const snackbar = useSnackbar();
     const [categoriesOptions, setCategoriesOptions] = React.useState<string[]>([]);
+    const [isSubscribed, setIsSubscribed] = useState(true);
     const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         setValue("categories_id", event.target.value as string[]);
     };
     const fieldRegister = utilRegister(register, registerFields);
     useEffect(() => {
-        categoryHttp.list().then(({data}) => {
-            setCategoriesOptions(data);
+        getData({
+            httpProvider: categoryHttp,
+            setData: setCategoriesOptions,
+            snackbar,
+            isSubscribed: () => {
+                return isSubscribed;
+            }
         });
+
+        return () => {
+            setIsSubscribed(false);
+        }
     }, []);
 
     return (

@@ -2,9 +2,11 @@
 import * as React from 'react';
 import {MUIDataTableColumn} from "mui-datatables";
 import {format, parseISO} from "date-fns";
-import DefaultList from "../../components/PageList";
+import DefaultList from "../../components/DefaultPageList";
 import castMemberHttp, {CastMember} from "../../util/http/cast-member-http";
 import {useEffect, useState} from "react";
+import {getData} from "../../util/form";
+import {useSnackbar} from "notistack";
 
 export const CastMemberTypeMap: any = {
     1: "Diretor",
@@ -38,8 +40,18 @@ const columnsDefinition: MUIDataTableColumn[] = [
 
 const PageList = () => {
     const [data, setData] = useState<CastMember[]>([]);
+    const snackbar = useSnackbar();
+    const [isSubscribed, setIsSubscribed] = useState(true);
     useEffect(() => {
-        castMemberHttp.list<CastMember[]>().then(({data}) => setData(data));
+        getData({
+            httpProvider: castMemberHttp,
+            setData,
+            snackbar,
+            isSubscribed: () => {return isSubscribed;}
+        });
+        return () => {
+            setIsSubscribed(false);
+        }
     }, []);
     return (
         <DefaultList

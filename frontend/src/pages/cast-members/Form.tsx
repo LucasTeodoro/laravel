@@ -1,6 +1,14 @@
 // @flow
 import * as React from 'react';
-import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField} from "@material-ui/core";
+import {
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    FormLabel,
+    Radio,
+    RadioGroup,
+    TextField
+} from "@material-ui/core";
 import {FormProps, register as utilRegister, RegisterFields} from "../../util/form";
 import {CastMemberTypeMap} from "./PageList";
 import {useFormContext, useFormState} from "react-hook-form";
@@ -15,15 +23,9 @@ const registerFields: RegisterFields[] = [
 ]
 
 const Form: React.FC<FormProps> = ({loading}) => {
-    const {register, setValue, watch, getValues} = useFormContext();
+    const {register, watch} = useFormContext();
     const {errors} = useFormState();
     const fieldRegister = utilRegister(register, registerFields);
-    const [memberType, setMemberType] = React.useState<string>("");
-
-    const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setMemberType(event.target.value as string);
-        setValue("type", event.target.value);
-    };
 
     return (
         <React.Fragment>
@@ -39,14 +41,18 @@ const Form: React.FC<FormProps> = ({loading}) => {
                 helperText={errors.name && errors.name.message}
                 InputLabelProps={{shrink: !!watch("name")}}
             />
-            <FormControl margin={"normal"} component="fieldset">
+            <FormControl
+                margin={"normal"}
+                error={errors.type !== undefined}
+                component="fieldset"
+            >
                 <FormLabel component="legend">Tipo</FormLabel>
                 <RadioGroup
                     ref={fieldRegister["type"].ref}
                     aria-label={"type"}
                     name={"type"}
-                    value={memberType}
-                    onChange={handleChange}
+                    value={watch("type") + ""}
+                    onChange={fieldRegister["type"].onChange}
                 >
                     {
                         Object.keys(CastMemberTypeMap).map((value: any) => {
@@ -54,11 +60,14 @@ const Form: React.FC<FormProps> = ({loading}) => {
                                 key={value}
                                 label={CastMemberTypeMap[value]}
                                 value={value}
-                                control={<Radio checked={getValues("type") == value} color={"primary"}/>}
+                                control={<Radio color={"primary"}/>}
                             />
                         })
                     }
                 </RadioGroup>
+                {
+                    errors.type && <FormHelperText id={"type-helper-text"}>{errors.type.mesage}</FormHelperText>
+                }
             </FormControl>
         </React.Fragment>
     );

@@ -2,10 +2,12 @@
 import * as React from 'react';
 import {MUIDataTableColumn} from "mui-datatables";
 import {format, parseISO} from "date-fns";
-import DefaultList from "../../components/PageList";
+import DefaultList from "../../components/DefaultPageList";
 import genreHttp, {Genre} from "../../util/http/genre-http";
 import {useEffect, useState} from "react";
 import {BadgeNo, BadgeYes} from "../../components/Badge";
+import {getData} from "../../util/form";
+import {useSnackbar} from "notistack";
 
 const columnsDefinition: MUIDataTableColumn[] = [
     {
@@ -43,8 +45,19 @@ const columnsDefinition: MUIDataTableColumn[] = [
 
 const PageList = () => {
     const [data, setData] = useState<Genre[]>([]);
+    const snackbar = useSnackbar();
+    const [isSubscribed, setIsSubscribed] = useState(true);
     useEffect(() => {
-        genreHttp.list<Genre[]>().then(({data}) => setData(data));
+        getData({
+            setData,
+            httpProvider: genreHttp,
+            snackbar,
+            isSubscribed: () => {return isSubscribed;}
+        });
+
+        return () => {
+            setIsSubscribed(false);
+        }
     }, []);
     return (
         <DefaultList

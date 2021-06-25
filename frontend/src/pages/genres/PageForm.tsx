@@ -1,14 +1,15 @@
 // @flow
 import * as React from 'react';
-import DefaultForm from '../../components/PageForm';
+import DefaultForm from '../../components/DefaultPageForm';
 import Form from "./Form";
 import genreHttp from "../../util/http/genre-http";
 import {UseFormProps} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {GenreSchema} from "../../util/vendor/yup";
 import {useHistory, useParams} from "react-router-dom";
-import {useSnackbar} from "notistack";
 import {useEffect, useState} from "react";
+import {getData, Submit} from "../../util/form";
+import {useSnackbar} from "notistack";
 
 const FormProps: UseFormProps = {
     resolver: yupResolver(GenreSchema),
@@ -23,39 +24,38 @@ const httpProvider = genreHttp;
 
 const PageForm = () => {
     const { id } = useParams<{ id: string }>();
-    const history = useHistory();
     const snackbar = useSnackbar();
+    const history = useHistory();
     const [genre, setGenre] = useState<{id: string} | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const [isSubscribed, setIsSubscribed] = useState(true);
     useEffect(() => {
-        if(!id) return;
-        setLoading(true);
-        httpProvider.get(id)
-            .then(({data}) => {
-                setGenre({categories_id: [], ...data});
-            }).finally(() => setLoading(false));
-    }, [id]);
-    function onSubmit(formData: any, event: any) {
-        setLoading(true);
-        const http = !genre
-            ? httpProvider.create(formData)
-            : httpProvider.update(genre.id, formData);
+        getData({
+            httpProvider,
+            setValue: setLoading,
+            setData: setGenre,
+            id,
+            snackbar,
+            isSubscribed: () => {return isSubscribed;}
+        });
 
-        http
-            .then(({data}) => {
-                snackbar.enqueueSnackbar("Gênero salvo com sucesso.", {variant: "success"})
-                setTimeout(() => {
-                    event ? (
-                        genre
-                            ? history.replace(`/${url}/${data.id}/edit`)
-                            : history.push(`/${url}/${data.id}/edit`)
-                    ) : history.push(`/${url}`);
-                });
-            })
-            .catch(() => {
-                snackbar.enqueueSnackbar("Não foi possivel salvar o gênero.", {variant: "error"})
-            })
-            .finally(() => setLoading(false));
+        return () => {
+            setIsSubscribed(false);
+        };
+    }, [id]);
+    async function onSubmit(formData: any, event: any) {
+        await Submit(
+            httpProvider,
+            formData,
+            url,
+            setLoading,
+            event,
+            genre,
+            snackbar,
+            history,
+            "Gênero salvo com sucesso.",
+            "Não foi possivel salvar o gênero."
+        );
     }
 
     return (

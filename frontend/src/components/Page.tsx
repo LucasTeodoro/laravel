@@ -8,9 +8,9 @@ const useStyles = makeStyles({
     }
 })
 
-type PageProps = {
+export interface PageProps {
     title: string
-};
+}
 export const Page: React.FC<PageProps> = (props) => {
     const classes = useStyles();
     return (

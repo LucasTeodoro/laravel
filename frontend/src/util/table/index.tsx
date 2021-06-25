@@ -2,12 +2,12 @@ import * as React from 'react';
 import MUIDataTable, {MUIDataTableColumn} from "mui-datatables";
 import {useEffect, useState} from "react";
 
-type Props = {
-    data: any[],
-    columnsDefinitions: MUIDataTableColumn[],
-    title?: string
-};
-const Index = (props: Props) => {
+export interface UtilTableProps {
+    data: any[];
+    columnsDefinitions: MUIDataTableColumn[];
+    title?: string;
+}
+const Index: React.FC<UtilTableProps> = (props) => {
     const [data, setData] = useState<any[]>([]);
     useEffect(() => {
         setData(props.data);
